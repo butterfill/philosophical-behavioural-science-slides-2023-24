@@ -1,0 +1,767 @@
+<html lang="en"><head><meta charset="utf-8"/><title>The Interface Problem: Motor Representation vs Intention</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="the_interface_problem"><img class="bkg" src="/img/james-bond-strapped-to-a-water-wheel-repin.low.png"/><div class="spacer">&nbsp;</div><div class="title-block" style="position:relative; top:425px"><div class="title-container"><h2 class="title1">The Interface Problem: Motor Representation vs Intention</h2></div></div></section><section class="slide"><div class="words"><div style="mix-blend-mode:difference"> <div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="timer-outer" id="timer1"><div class="timer center timer-90s hide"><div class="mask"></div></div><div class="timer-90s-block-wrapper"><div class="timer-90s-block"></div></div></div></div></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12"><div><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647 402" width="366" height="420">
+  <defs>
+    <style class="style-fonts">
+      @font-face {
+        font-family: "Virgil";
+        src: url("/fonts/Virgil.woff2");
+      }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="366" height="400" fill="#000"></rect>
+  <g stroke-linecap="round" transform="translate(10 10) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C63.05 0.41, 96.88 -0.01, 140.99 0 M29.88 0 C58.83 0.98, 87.68 1.15, 140.99 0 M140.99 0 C159.06 -0.59, 169.45 11.88, 170.87 29.88 M140.99 0 C160.88 -1.43, 169.9 9.26, 170.87 29.88 M170.87 29.88 C171.25 45.58, 172.16 60.6, 170.87 89.65 M170.87 29.88 C171.59 49.71, 171.57 69.3, 170.87 89.65 M170.87 89.65 C169.17 109.72, 160.73 121.23, 140.99 119.53 M170.87 89.65 C171.56 111.31, 162.51 119.69, 140.99 119.53 M140.99 119.53 C107.6 119.22, 76.98 118.42, 29.88 119.53 M140.99 119.53 C111.32 119.23, 82.25 120.25, 29.88 119.53 M29.88 119.53 C10.84 119.65, -1.19 109.08, 0 89.65 M29.88 119.53 C11.73 119.74, -1.67 107.28, 0 89.65 M0 89.65 C-0.87 70.48, -1.05 48.98, 0 29.88 M0 89.65 C0.16 75.21, -1.24 61.55, 0 29.88 M0 29.88 C1.97 10.38, 11.78 -0.95, 29.88 0 M0 29.88 C-2.13 11.31, 9.95 0.18, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(27.855224609375 18.9739990234375) rotate(0 67.36795043945312 52.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">intention: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">add egg </text>
+    <text x="0" y="70" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">to sauce</text>
+  </g>
+  <g stroke-linecap="round" transform="translate(19.10400390625 251.4613800048828) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C67.39 0.83, 108.17 0.74, 140.99 0 M29.88 0 C72.19 0.39, 114.41 0.26, 140.99 0 M140.99 0 C159.68 -1.42, 170.33 10.74, 170.87 29.88 M140.99 0 C160.72 1.77, 170.14 9.89, 170.87 29.88 M170.87 29.88 C170.49 47.21, 170.46 68.18, 170.87 89.65 M170.87 29.88 C171.19 46.51, 171.28 64.62, 170.87 89.65 M170.87 89.65 C171.25 108.35, 160.14 119.79, 140.99 119.53 M170.87 89.65 C172.15 110.74, 160.06 118.15, 140.99 119.53 M140.99 119.53 C106.68 122.04, 72.55 119.03, 29.88 119.53 M140.99 119.53 C113.67 117.55, 86.81 117.84, 29.88 119.53 M29.88 119.53 C8.77 119.57, -2 111.5, 0 89.65 M29.88 119.53 C7.93 121.02, 0.84 108.84, 0 89.65 M0 89.65 C0.36 70.92, 0.91 49.91, 0 29.88 M0 89.65 C-0.69 69.61, -0.06 52.06, 0 29.88 M0 29.88 C-1.63 7.99, 9.84 0.37, 29.88 0 M0 29.88 C1.37 8.59, 9.61 0.97, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(212.53192138671875 491.7337188720703) rotate(0 65.56198120117188 35)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">grasp egg</text>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M0.68 -0.39 C9.56 20.99, 43.85 106.5, 52.52 127.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M31.81 103.56 C37.47 109.06, 41.76 114.53, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M50.84 95.88 C51.97 103.31, 51.75 110.6, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M-0.24 0.58 C8.54 21.87, 44.06 105.77, 53 126.88" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M33.53 103.75 C37.88 111.65, 45.17 118.21, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M52.43 95.75 C50.54 106.23, 51.65 115.4, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g transform="translate(129.09555053710938 275.4708251953125) rotate(0 52.91996765136719 17.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">[things]</text>
+  </g>
+  <g class='alt-mr'>
+    <g transform="translate(400.7220764160156 494.02398681640625) rotate(0 65.5479736328125 35)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+      <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">roll egg</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(194.9375 486) rotate(0 87.76006629429759 47.5956055100076)">
+        <path d="M-0.89 -0.93 C28.69 14.75, 146.8 78.75, 176.41 94.98 M0.85 1.19 C30.36 16.93, 146.21 80.57, 175.43 96.12" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(354.35790362525745 485.5197509353047) rotate(0 -88.92537043262286 48.04877564234664)">
+        <path d="M-1.2 -0.76 C-30.69 15.23, -147.75 79.2, -177 95.46 M0.38 1.46 C-29.32 17.67, -148.56 81.26, -178.23 96.85" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M0.11 0.45 C35.75 24.37, 178.79 118.85, 214.42 142.76" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M186.01 137.59 C194.24 139.17, 206.25 139.62, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M197.38 120.5 C201.55 128.02, 209.62 134.4, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(244.7337641668612 396.3780157975076) rotate(0 -23.002812804172066 12.72372464461887)">
+        <path d="M-1.1 0.81 C-8.64 4.75, -38.54 19.99, -45.95 24.27 M0.52 0.19 C-7.04 4.19, -38.81 21.16, -46.52 25.26" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(202.3008766602619 396.2509989787512) rotate(0 23.69761072518517 12.736041977728519)">
+        <path d="M0.72 -1.05 C8.86 3.24, 40.08 22.13, 47.76 26.52 M-0.36 1.02 C7.81 4.93, 39.64 20.76, 47.38 25.03" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+  </g>
+
+  <g class='other-causes'>
+    <g stroke-linecap="round">
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M-0.05 -0.25 C13.76 68.84, 69.26 345.2, 82.95 413.92" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M66.94 388.83 C73.2 395.24, 74.91 405.91, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M87.06 384.8 C87.14 392.44, 82.67 404.34, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(271.6523895263672 10.525738688586216) rotate(0 75.24996185302734 17.5)">
+      <text class='affordance' x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">affordance</text>
+    </g>
+
+    <g class='affordnace-bkg hide' stroke-linecap="round">
+      <g stroke-linecap="round" transform="translate(240.05012893676758 0) rotate(0 99.285400390625 27.1927490234375)">
+        <path d="M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.49 11.89 C3.36 9.56, 5.21 8.43, 8.05 4.35 M1.49 11.89 C3.38 9.8, 5.56 7.29, 8.05 4.35 M1.88 17.54 C7.47 10.7, 11.28 5.45, 15.66 1.69 M1.88 17.54 C5.33 12.85, 8.93 8.97, 15.66 1.69 M1.62 23.94 C5.52 16.53, 9.56 11.98, 20.65 2.05 M1.62 23.94 C6.96 17.05, 15 10.01, 20.65 2.05 M1.36 30.33 C8.45 23.34, 16.03 16.07, 26.29 1.65 M1.36 30.33 C8.41 21.94, 17.62 11.15, 26.29 1.65 M1.76 35.98 C10.86 25.86, 22.86 11.44, 31.28 2.01 M1.76 35.98 C10.53 26.88, 17.75 16.4, 31.28 2.01 M1.49 42.37 C10.84 30.93, 25.11 17.36, 36.92 1.62 M1.49 42.37 C12.42 29.42, 22.15 17.82, 36.92 1.62 M3.2 46.51 C15.79 31.14, 29.06 15.64, 41.91 1.98 M3.2 46.51 C17.49 29.9, 32.85 13.94, 41.91 1.98 M4.25 51.4 C19.22 36.36, 30.64 18.71, 47.55 1.59 M4.25 51.4 C13.56 40.33, 22.03 30.67, 47.55 1.59 M7.93 53.27 C16.64 40.3, 29.67 28.84, 52.54 1.95 M7.93 53.27 C21.03 38.9, 32.84 23.34, 52.54 1.95 M12.91 53.63 C30.14 36.06, 44.33 13.76, 57.53 2.31 M12.91 53.63 C26.08 38.99, 40.45 22.92, 57.53 2.31 M18.56 53.23 C29.6 43.26, 38.93 30.57, 63.17 1.91 M18.56 53.23 C36.44 33.96, 53.56 13.58, 63.17 1.91 M23.54 53.59 C35.61 38.84, 49.45 26.2, 68.16 2.27 M23.54 53.59 C38.59 35.87, 52.43 19.58, 68.16 2.27 M28.53 53.95 C45.26 32.4, 65 11.89, 73.8 1.88 M28.53 53.95 C41.3 39.87, 53.28 24.44, 73.8 1.88 M34.17 53.56 C48.57 40.45, 60.02 26.14, 78.79 2.24 M34.17 53.56 C47.14 38.62, 60.76 22.99, 78.79 2.24 M39.16 53.92 C47.8 42.74, 57.4 31.04, 84.43 1.84 M39.16 53.92 C51.32 39.58, 63.49 26.7, 84.43 1.84 M44.8 53.52 C56.07 40.05, 67.36 30.48, 89.42 2.2 M44.8 53.52 C57.73 39.81, 70.94 25.16, 89.42 2.2 M49.79 53.88 C59.58 44.03, 66.89 30.78, 95.06 1.81 M49.79 53.88 C64.24 38.09, 77.5 21.48, 95.06 1.81 M55.43 53.49 C73.44 32.03, 90.27 13.23, 100.05 2.17 M55.43 53.49 C65.6 41.1, 75.91 29.97, 100.05 2.17 M60.42 53.85 C75.56 36.7, 90.77 18.6, 105.03 2.53 M60.42 53.85 C72.23 41.12, 82.71 27.98, 105.03 2.53 M65.41 54.21 C76.32 37.5, 89.77 22.31, 110.68 2.13 M65.41 54.21 C82.78 36.13, 97.56 17.2, 110.68 2.13 M71.05 53.81 C87.67 36.8, 104.27 17.69, 115.66 2.49 M71.05 53.81 C87.23 35.01, 103.95 15.09, 115.66 2.49 M76.04 54.17 C86.82 39.54, 97.86 25.68, 121.31 2.1 M76.04 54.17 C91.92 35.65, 108.03 17.81, 121.31 2.1 M81.68 53.78 C96.84 39.3, 109.55 22.71, 126.29 2.46 M81.68 53.78 C92.09 42.55, 103.63 28.43, 126.29 2.46 M86.67 54.14 C99.3 37.31, 114.97 21.54, 131.94 2.06 M86.67 54.14 C102.65 37.25, 118.07 18.7, 131.94 2.06 M92.31 53.74 C101.51 41.86, 111.8 33.28, 136.92 2.42 M92.31 53.74 C106.74 38.29, 120.26 22.57, 136.92 2.42 M97.3 54.1 C104.89 43.69, 118.39 30.89, 142.57 2.03 M97.3 54.1 C113.14 35.14, 130.88 14.44, 142.57 2.03 M102.94 53.71 C116.52 36.99, 134.91 16.01, 147.55 2.39 M102.94 53.71 C113.7 40.25, 126.29 27.1, 147.55 2.39 M107.93 54.07 C118.19 41.74, 128.25 30.65, 152.54 2.75 M107.93 54.07 C121.71 36.8, 135.65 19.9, 152.54 2.75 M112.92 54.43 C123.92 43.49, 135.89 31.05, 158.18 2.36 M112.92 54.43 C126.05 39.78, 137.82 26.62, 158.18 2.36 M118.56 54.04 C130.46 40.79, 141.14 30.66, 163.17 2.72 M118.56 54.04 C133.55 34.49, 149.22 18.06, 163.17 2.72 M123.55 54.4 C132.34 44.28, 142.86 32.6, 168.81 2.32 M123.55 54.4 C133.66 44.65, 142.37 33.88, 168.81 2.32 M129.19 54 C142.13 36.1, 156.73 19.27, 173.8 2.68 M129.19 54 C141.49 38.48, 154.55 23.76, 173.8 2.68 M134.18 54.36 C142.59 42.44, 152.27 33.31, 179.44 2.29 M134.18 54.36 C149.21 36.38, 165.98 18.4, 179.44 2.29 M139.82 53.97 C149.18 43.96, 161.96 28.59, 184.43 2.65 M139.82 53.97 C150.75 40.71, 161.21 29.43, 184.43 2.65 M144.81 54.33 C158.67 41.72, 169.26 24.7, 191.39 0.74 M144.81 54.33 C160.44 37.9, 174.88 20.93, 191.39 0.74 M150.45 53.93 C164.7 37.44, 176.81 23.38, 194.4 3.37 M150.45 53.93 C166.51 36.64, 181.6 19.78, 194.4 3.37 M155.44 54.29 C164.96 45.92, 173.6 33.61, 197.42 5.99 M155.44 54.29 C168.7 38.72, 182.52 24.99, 197.42 5.99 M160.42 54.65 C174.01 37.56, 190.4 19.5, 198.47 10.88 M160.42 54.65 C169.07 43.45, 178.76 33.33, 198.47 10.88 M166.07 54.26 C176.4 42.96, 184.49 30.99, 198.87 16.52 M166.07 54.26 C175.75 44.27, 184.82 33.83, 198.87 16.52 M171.05 54.62 C179.24 47.22, 186.5 36.04, 198.61 22.92 M171.05 54.62 C178.47 45.85, 186.14 38.9, 198.61 22.92 M176.7 54.22 C180.87 47.81, 184.36 43.8, 198.35 29.32 M176.7 54.22 C180.64 49.44, 185.5 44.91, 198.35 29.32 M181.68 54.58 C183.52 49.77, 186.81 44.96, 198.08 35.72 M181.68 54.58 C188.08 48.59, 192.82 41.34, 198.08 35.72 M186.01 55.7 C189.51 52.45, 191.07 48.99, 197.82 42.11 M186.01 55.7 C190.07 50.45, 193.7 46.68, 197.82 42.11" stroke="#ffd43b" stroke-width="0.5" fill="none"></path>
+        <path d="M13.6 0 M13.6 0 C68.42 0.72, 122.91 -0.37, 184.97 0 M13.6 0 C71.42 -0.71, 128.76 -0.72, 184.97 0 M184.97 0 C193.15 1.4, 200.55 5.67, 198.57 13.6 M184.97 0 C192.31 1.92, 197.86 6.79, 198.57 13.6 M198.57 13.6 C199.45 21.98, 198.51 31.67, 198.57 40.79 M198.57 13.6 C197.71 20.12, 198.99 25.84, 198.57 40.79 M198.57 40.79 C197.29 51.1, 195.81 55.6, 184.97 54.39 M198.57 40.79 C199.83 49.18, 195.01 53.54, 184.97 54.39 M184.97 54.39 C128.71 55.06, 71.6 54.1, 13.6 54.39 M184.97 54.39 C144.14 53.99, 102.03 53.92, 13.6 54.39 M13.6 54.39 C3.75 56.14, 1.24 48.88, 0 40.79 M13.6 54.39 C6.41 55.67, -1.46 48.87, 0 40.79 M0 40.79 C-0.12 32.71, 1.02 23.96, 0 13.6 M0 40.79 C-0.51 31.32, -0.4 21.5, 0 13.6 M0 13.6 C-1.81 2.68, 5.97 1.18, 13.6 0 M0 13.6 C1.04 5.12, 6.64 -2.05, 13.6 0" stroke="#1e1e1e" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+
+    <g transform="translate(479.28783416748047 41.15211197960184) rotate(0 76.99996185302734 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">association</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-0.99 -0.06 C-15.48 64.8, -73.5 324.43, -87.95 389.39" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-91.93 360.38 C-90.22 367.16, -88.93 374.03, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-71.9 364.84 C-74.48 370.51, -77.47 376.42, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(595.5419845581055 93.46909806358622) rotate(0 11.50799560546875 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">...</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-0.22 0.04 C-21.42 55.27, -106.97 276.5, -128.02 332.24" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-127.46 300.54 C-129.26 310.01, -125.63 316.72, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-108.3 307.88 C-114.6 315.61, -115.43 320.6, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+  </g>
+</svg>
+
+
+</div><div class="dv dv-velocity" data-what=".alt-mr, .other-causes" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div style="margin-left:400px"><div class="slide"><p class="do-match">✓ intention and motor representation <span class="match">match</span></p><p class="no-match hide">✗ intention and motor representation fail to match</p></div></div></div><div class="slide"><div class="dv dv-addclass" data-what=".match" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".match" data-cls="bkg-invert"></div><div class="notes">[glossary:] Two collections of outcomes, A and B, *match* in a particular context just if, 
+in that context, either the occurrence of the A-outcomes would normally 
+constitute or cause, at least partially, the occurrence of the B-outcomes or 
+vice versa. </div></div><div class="slide"><div class="dv dv-removeclass" data-what=".match" data-cls="bkg-invert"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".alt-mr" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-style" data-what=".do-match" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div><div class="dv dv-velocity" data-what=".no-match" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><p class="center huge-glow">is it possible?</p></div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-removeclass" data-what="#timer1 .timer" data-cls="running"></div><div class="notes">What do you think? How could this happen?
+Can you imagine how this might come about?</div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer.hide" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what="#timer1 .timer" data-cls="running"></div></div></div></div></div></div></section><section class="slide"><div class="notes">anarchic hand syndrom from dr strangelove <span class='grey-text'>(Della Sala, Marchetti, &#38; Spinnler, 1991)</span></div><div class="notes">[for the future—do not say this yet!]
+One limit of AHS: it does not show that the intention gives rise to a non-matching
+motor representation (instead it appears that other factors overcome the intention’s influence).</div><div class="notes">By contrast Norman’s croutons (coming later) do show an intention causing a motor representation
+but the wrong one.</div><div class="clip1" style="margin-top:-160px; margin-left:-100px"><video width="1024" height="768" playsinline="playsinline"><source src="/img/dr-strangelove-ahs-01.30.58-01.31.16.mp4" type="video/mp4"/></video></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="words"><div class="container_12"><div class="grid_12"><div style="margin-top:170px"><p class="center">anarchic hand syndrom</p><div class="description hide"><p class="d1">‘The right hand frequently carried out complex activities that
+were not willed by G.C. </p><div class="d2 hide"><span>These activities were </span><span class="no-fade">clearly goal-directed</span><span> and were </span><span class="no-fade">well executed</span><span>, but </span><span class="no-fade">undesired by the patient</span><span>, who </span><span class="no-fade">used her left hand to try to stop them</span><span>. </span></div><div class="example"><div class="d3 hide">For
+example, when the patient had a steaming cup of tea in front of
+her, the right hand proceeded to pick it up and bring it to her
+mouth, even though the patient knew that it was too hot and had
+just said she would wait a few moments until it had cooled.</div><div class="d4 hide">Nevertheless it needed the intervention of her left hand to
+replace the cup on the table.’</div></div><p class="right"><span class='grey-text'>(Della Sala et al., 1991, p. 1114)</span></p></div></div></div></div></div></div><div class="slide"><div class="dv dv-velocity" data-what="p" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><script>function getVideo () { return $('.clip1 video')[0] }
+addAction({ 
+  'doit' : function () {
+    getVideo().play()
+  },
+  'undoit' : function () {
+    getVideo().pause()
+  }
+})</script></div><div class="slide"><div class="dv dv-velocity" data-what="p" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".clip1" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".description" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".d2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".d3" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".d4" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".example" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".d1, .d2 span:not(.no-fade)" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><div class="notes">Go really slowly here. Drive it home by saying it again.
+(Do not comment, just repeat)
+
+</div></div></section><section class="slide"><img class="bkg" src="/img/ahs-stealing-food.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;margin-top&quot;:&quot;-100px&quot;}"></div><p class="source">Bing AI / <span class='grey-text'>Marchetti &#38; Sala (1997, p. 344)</span></p><div class="notes">More background on AHS: 
+<span class='grey-text'>(Mylopoulos &#38; Pacherie, 2016, p. 7)</span>: ‘Typically the result of lesion
+to SMA or anterior corpus callosum, AHS is a condition in which patients
+perform complex, goal-oriented movements with their cross-lesional limb
+that they feel unable to directly inhibit or control. The limb is often
+disproportionately reactive to environmental stimuli, carrying out
+habitual behaviors that are inappropriate to the context, e.g., grabbing
+food from a dinner companion’s plate (Della Sala 2005, 606). It is clear
+from many of the behaviors observed in these cases that the anarchic limb
+fails to hook up with the agent’s intentions.’</div><div class="notes">Btw, although <span class='grey-text'>(Mylopoulos &#38; Pacherie, 2016, p. 7)</span> are correct that
+the example is given in Della Sala 2005 (=https://www.bps.org.uk/psychologist/anarchic-hand),
+it involves ice-cream and is better explained in <span class='grey-text'>Marchetti &#38; Sala (1997, p. 344)</span> (the
+canonical source).</div><div class="notes">See <span class='grey-text'>Marchetti &#38; Sala (1997, p. 344)</span> On Mrs GP: ‘the patient told us that on one occasion, 
+at dinner with friends and relatives, 
+much to her embarassment and others’ dismay, her left hand grabbed the ice-cream that 
+one of the guests was eating, unable to stop herself, at the same time complaining 
+that this was not what she wanted to do.’
+</div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647 402" width="366" height="420">
+  <defs>
+    <style class="style-fonts">
+      @font-face {
+        font-family: "Virgil";
+        src: url("/fonts/Virgil.woff2");
+      }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="366" height="400" fill="#000"></rect>
+  <g stroke-linecap="round" transform="translate(10 10) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C63.05 0.41, 96.88 -0.01, 140.99 0 M29.88 0 C58.83 0.98, 87.68 1.15, 140.99 0 M140.99 0 C159.06 -0.59, 169.45 11.88, 170.87 29.88 M140.99 0 C160.88 -1.43, 169.9 9.26, 170.87 29.88 M170.87 29.88 C171.25 45.58, 172.16 60.6, 170.87 89.65 M170.87 29.88 C171.59 49.71, 171.57 69.3, 170.87 89.65 M170.87 89.65 C169.17 109.72, 160.73 121.23, 140.99 119.53 M170.87 89.65 C171.56 111.31, 162.51 119.69, 140.99 119.53 M140.99 119.53 C107.6 119.22, 76.98 118.42, 29.88 119.53 M140.99 119.53 C111.32 119.23, 82.25 120.25, 29.88 119.53 M29.88 119.53 C10.84 119.65, -1.19 109.08, 0 89.65 M29.88 119.53 C11.73 119.74, -1.67 107.28, 0 89.65 M0 89.65 C-0.87 70.48, -1.05 48.98, 0 29.88 M0 89.65 C0.16 75.21, -1.24 61.55, 0 29.88 M0 29.88 C1.97 10.38, 11.78 -0.95, 29.88 0 M0 29.88 C-2.13 11.31, 9.95 0.18, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(27.855224609375 18.9739990234375) rotate(0 67.36795043945312 52.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">intention: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">add egg </text>
+    <text x="0" y="70" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">to sauce</text>
+  </g>
+  <g stroke-linecap="round" transform="translate(19.10400390625 251.4613800048828) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C67.39 0.83, 108.17 0.74, 140.99 0 M29.88 0 C72.19 0.39, 114.41 0.26, 140.99 0 M140.99 0 C159.68 -1.42, 170.33 10.74, 170.87 29.88 M140.99 0 C160.72 1.77, 170.14 9.89, 170.87 29.88 M170.87 29.88 C170.49 47.21, 170.46 68.18, 170.87 89.65 M170.87 29.88 C171.19 46.51, 171.28 64.62, 170.87 89.65 M170.87 89.65 C171.25 108.35, 160.14 119.79, 140.99 119.53 M170.87 89.65 C172.15 110.74, 160.06 118.15, 140.99 119.53 M140.99 119.53 C106.68 122.04, 72.55 119.03, 29.88 119.53 M140.99 119.53 C113.67 117.55, 86.81 117.84, 29.88 119.53 M29.88 119.53 C8.77 119.57, -2 111.5, 0 89.65 M29.88 119.53 C7.93 121.02, 0.84 108.84, 0 89.65 M0 89.65 C0.36 70.92, 0.91 49.91, 0 29.88 M0 89.65 C-0.69 69.61, -0.06 52.06, 0 29.88 M0 29.88 C-1.63 7.99, 9.84 0.37, 29.88 0 M0 29.88 C1.37 8.59, 9.61 0.97, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(212.53192138671875 491.7337188720703) rotate(0 65.56198120117188 35)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">grasp egg</text>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M0.68 -0.39 C9.56 20.99, 43.85 106.5, 52.52 127.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M31.81 103.56 C37.47 109.06, 41.76 114.53, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M50.84 95.88 C51.97 103.31, 51.75 110.6, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M-0.24 0.58 C8.54 21.87, 44.06 105.77, 53 126.88" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M33.53 103.75 C37.88 111.65, 45.17 118.21, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M52.43 95.75 C50.54 106.23, 51.65 115.4, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g transform="translate(129.09555053710938 275.4708251953125) rotate(0 52.91996765136719 17.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">[things]</text>
+  </g>
+  <g class='alt-mr'>
+    <g transform="translate(400.7220764160156 494.02398681640625) rotate(0 65.5479736328125 35)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+      <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">roll egg</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(194.9375 486) rotate(0 87.76006629429759 47.5956055100076)">
+        <path d="M-0.89 -0.93 C28.69 14.75, 146.8 78.75, 176.41 94.98 M0.85 1.19 C30.36 16.93, 146.21 80.57, 175.43 96.12" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(354.35790362525745 485.5197509353047) rotate(0 -88.92537043262286 48.04877564234664)">
+        <path d="M-1.2 -0.76 C-30.69 15.23, -147.75 79.2, -177 95.46 M0.38 1.46 C-29.32 17.67, -148.56 81.26, -178.23 96.85" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M0.11 0.45 C35.75 24.37, 178.79 118.85, 214.42 142.76" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M186.01 137.59 C194.24 139.17, 206.25 139.62, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M197.38 120.5 C201.55 128.02, 209.62 134.4, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(244.7337641668612 396.3780157975076) rotate(0 -23.002812804172066 12.72372464461887)">
+        <path d="M-1.1 0.81 C-8.64 4.75, -38.54 19.99, -45.95 24.27 M0.52 0.19 C-7.04 4.19, -38.81 21.16, -46.52 25.26" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(202.3008766602619 396.2509989787512) rotate(0 23.69761072518517 12.736041977728519)">
+        <path d="M0.72 -1.05 C8.86 3.24, 40.08 22.13, 47.76 26.52 M-0.36 1.02 C7.81 4.93, 39.64 20.76, 47.38 25.03" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+  </g>
+
+  <g class='other-causes'>
+    <g stroke-linecap="round">
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M-0.05 -0.25 C13.76 68.84, 69.26 345.2, 82.95 413.92" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M66.94 388.83 C73.2 395.24, 74.91 405.91, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M87.06 384.8 C87.14 392.44, 82.67 404.34, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(271.6523895263672 10.525738688586216) rotate(0 75.24996185302734 17.5)">
+      <text class='affordance' x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">affordance</text>
+    </g>
+
+    <g class='affordnace-bkg hide' stroke-linecap="round">
+      <g stroke-linecap="round" transform="translate(240.05012893676758 0) rotate(0 99.285400390625 27.1927490234375)">
+        <path d="M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.49 11.89 C3.36 9.56, 5.21 8.43, 8.05 4.35 M1.49 11.89 C3.38 9.8, 5.56 7.29, 8.05 4.35 M1.88 17.54 C7.47 10.7, 11.28 5.45, 15.66 1.69 M1.88 17.54 C5.33 12.85, 8.93 8.97, 15.66 1.69 M1.62 23.94 C5.52 16.53, 9.56 11.98, 20.65 2.05 M1.62 23.94 C6.96 17.05, 15 10.01, 20.65 2.05 M1.36 30.33 C8.45 23.34, 16.03 16.07, 26.29 1.65 M1.36 30.33 C8.41 21.94, 17.62 11.15, 26.29 1.65 M1.76 35.98 C10.86 25.86, 22.86 11.44, 31.28 2.01 M1.76 35.98 C10.53 26.88, 17.75 16.4, 31.28 2.01 M1.49 42.37 C10.84 30.93, 25.11 17.36, 36.92 1.62 M1.49 42.37 C12.42 29.42, 22.15 17.82, 36.92 1.62 M3.2 46.51 C15.79 31.14, 29.06 15.64, 41.91 1.98 M3.2 46.51 C17.49 29.9, 32.85 13.94, 41.91 1.98 M4.25 51.4 C19.22 36.36, 30.64 18.71, 47.55 1.59 M4.25 51.4 C13.56 40.33, 22.03 30.67, 47.55 1.59 M7.93 53.27 C16.64 40.3, 29.67 28.84, 52.54 1.95 M7.93 53.27 C21.03 38.9, 32.84 23.34, 52.54 1.95 M12.91 53.63 C30.14 36.06, 44.33 13.76, 57.53 2.31 M12.91 53.63 C26.08 38.99, 40.45 22.92, 57.53 2.31 M18.56 53.23 C29.6 43.26, 38.93 30.57, 63.17 1.91 M18.56 53.23 C36.44 33.96, 53.56 13.58, 63.17 1.91 M23.54 53.59 C35.61 38.84, 49.45 26.2, 68.16 2.27 M23.54 53.59 C38.59 35.87, 52.43 19.58, 68.16 2.27 M28.53 53.95 C45.26 32.4, 65 11.89, 73.8 1.88 M28.53 53.95 C41.3 39.87, 53.28 24.44, 73.8 1.88 M34.17 53.56 C48.57 40.45, 60.02 26.14, 78.79 2.24 M34.17 53.56 C47.14 38.62, 60.76 22.99, 78.79 2.24 M39.16 53.92 C47.8 42.74, 57.4 31.04, 84.43 1.84 M39.16 53.92 C51.32 39.58, 63.49 26.7, 84.43 1.84 M44.8 53.52 C56.07 40.05, 67.36 30.48, 89.42 2.2 M44.8 53.52 C57.73 39.81, 70.94 25.16, 89.42 2.2 M49.79 53.88 C59.58 44.03, 66.89 30.78, 95.06 1.81 M49.79 53.88 C64.24 38.09, 77.5 21.48, 95.06 1.81 M55.43 53.49 C73.44 32.03, 90.27 13.23, 100.05 2.17 M55.43 53.49 C65.6 41.1, 75.91 29.97, 100.05 2.17 M60.42 53.85 C75.56 36.7, 90.77 18.6, 105.03 2.53 M60.42 53.85 C72.23 41.12, 82.71 27.98, 105.03 2.53 M65.41 54.21 C76.32 37.5, 89.77 22.31, 110.68 2.13 M65.41 54.21 C82.78 36.13, 97.56 17.2, 110.68 2.13 M71.05 53.81 C87.67 36.8, 104.27 17.69, 115.66 2.49 M71.05 53.81 C87.23 35.01, 103.95 15.09, 115.66 2.49 M76.04 54.17 C86.82 39.54, 97.86 25.68, 121.31 2.1 M76.04 54.17 C91.92 35.65, 108.03 17.81, 121.31 2.1 M81.68 53.78 C96.84 39.3, 109.55 22.71, 126.29 2.46 M81.68 53.78 C92.09 42.55, 103.63 28.43, 126.29 2.46 M86.67 54.14 C99.3 37.31, 114.97 21.54, 131.94 2.06 M86.67 54.14 C102.65 37.25, 118.07 18.7, 131.94 2.06 M92.31 53.74 C101.51 41.86, 111.8 33.28, 136.92 2.42 M92.31 53.74 C106.74 38.29, 120.26 22.57, 136.92 2.42 M97.3 54.1 C104.89 43.69, 118.39 30.89, 142.57 2.03 M97.3 54.1 C113.14 35.14, 130.88 14.44, 142.57 2.03 M102.94 53.71 C116.52 36.99, 134.91 16.01, 147.55 2.39 M102.94 53.71 C113.7 40.25, 126.29 27.1, 147.55 2.39 M107.93 54.07 C118.19 41.74, 128.25 30.65, 152.54 2.75 M107.93 54.07 C121.71 36.8, 135.65 19.9, 152.54 2.75 M112.92 54.43 C123.92 43.49, 135.89 31.05, 158.18 2.36 M112.92 54.43 C126.05 39.78, 137.82 26.62, 158.18 2.36 M118.56 54.04 C130.46 40.79, 141.14 30.66, 163.17 2.72 M118.56 54.04 C133.55 34.49, 149.22 18.06, 163.17 2.72 M123.55 54.4 C132.34 44.28, 142.86 32.6, 168.81 2.32 M123.55 54.4 C133.66 44.65, 142.37 33.88, 168.81 2.32 M129.19 54 C142.13 36.1, 156.73 19.27, 173.8 2.68 M129.19 54 C141.49 38.48, 154.55 23.76, 173.8 2.68 M134.18 54.36 C142.59 42.44, 152.27 33.31, 179.44 2.29 M134.18 54.36 C149.21 36.38, 165.98 18.4, 179.44 2.29 M139.82 53.97 C149.18 43.96, 161.96 28.59, 184.43 2.65 M139.82 53.97 C150.75 40.71, 161.21 29.43, 184.43 2.65 M144.81 54.33 C158.67 41.72, 169.26 24.7, 191.39 0.74 M144.81 54.33 C160.44 37.9, 174.88 20.93, 191.39 0.74 M150.45 53.93 C164.7 37.44, 176.81 23.38, 194.4 3.37 M150.45 53.93 C166.51 36.64, 181.6 19.78, 194.4 3.37 M155.44 54.29 C164.96 45.92, 173.6 33.61, 197.42 5.99 M155.44 54.29 C168.7 38.72, 182.52 24.99, 197.42 5.99 M160.42 54.65 C174.01 37.56, 190.4 19.5, 198.47 10.88 M160.42 54.65 C169.07 43.45, 178.76 33.33, 198.47 10.88 M166.07 54.26 C176.4 42.96, 184.49 30.99, 198.87 16.52 M166.07 54.26 C175.75 44.27, 184.82 33.83, 198.87 16.52 M171.05 54.62 C179.24 47.22, 186.5 36.04, 198.61 22.92 M171.05 54.62 C178.47 45.85, 186.14 38.9, 198.61 22.92 M176.7 54.22 C180.87 47.81, 184.36 43.8, 198.35 29.32 M176.7 54.22 C180.64 49.44, 185.5 44.91, 198.35 29.32 M181.68 54.58 C183.52 49.77, 186.81 44.96, 198.08 35.72 M181.68 54.58 C188.08 48.59, 192.82 41.34, 198.08 35.72 M186.01 55.7 C189.51 52.45, 191.07 48.99, 197.82 42.11 M186.01 55.7 C190.07 50.45, 193.7 46.68, 197.82 42.11" stroke="#ffd43b" stroke-width="0.5" fill="none"></path>
+        <path d="M13.6 0 M13.6 0 C68.42 0.72, 122.91 -0.37, 184.97 0 M13.6 0 C71.42 -0.71, 128.76 -0.72, 184.97 0 M184.97 0 C193.15 1.4, 200.55 5.67, 198.57 13.6 M184.97 0 C192.31 1.92, 197.86 6.79, 198.57 13.6 M198.57 13.6 C199.45 21.98, 198.51 31.67, 198.57 40.79 M198.57 13.6 C197.71 20.12, 198.99 25.84, 198.57 40.79 M198.57 40.79 C197.29 51.1, 195.81 55.6, 184.97 54.39 M198.57 40.79 C199.83 49.18, 195.01 53.54, 184.97 54.39 M184.97 54.39 C128.71 55.06, 71.6 54.1, 13.6 54.39 M184.97 54.39 C144.14 53.99, 102.03 53.92, 13.6 54.39 M13.6 54.39 C3.75 56.14, 1.24 48.88, 0 40.79 M13.6 54.39 C6.41 55.67, -1.46 48.87, 0 40.79 M0 40.79 C-0.12 32.71, 1.02 23.96, 0 13.6 M0 40.79 C-0.51 31.32, -0.4 21.5, 0 13.6 M0 13.6 C-1.81 2.68, 5.97 1.18, 13.6 0 M0 13.6 C1.04 5.12, 6.64 -2.05, 13.6 0" stroke="#1e1e1e" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+
+    <g transform="translate(479.28783416748047 41.15211197960184) rotate(0 76.99996185302734 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">association</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-0.99 -0.06 C-15.48 64.8, -73.5 324.43, -87.95 389.39" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-91.93 360.38 C-90.22 367.16, -88.93 374.03, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-71.9 364.84 C-74.48 370.51, -77.47 376.42, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(595.5419845581055 93.46909806358622) rotate(0 11.50799560546875 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">...</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-0.22 0.04 C-21.42 55.27, -106.97 276.5, -128.02 332.24" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-127.46 300.54 C-129.26 310.01, -125.63 316.72, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-108.3 307.88 C-114.6 315.61, -115.43 320.6, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+  </g>
+</svg>
+
+
+</div><div class="dv dv-velocity" data-what=".other-causes" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div style="margin-left:400px"><p class="do-match">✓ intention and motor representation <span class="match">match</span></p><p class="no-match">✗ intention and motor representation fail to match</p></div></div><div class="dv dv-style" data-what=".do-match" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div><div class="is-possible"><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><p class="center huge-glow">is it possible?</p></div></div><div class="slide"><div class="dv dv-velocity" data-what=".is-possible" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".other-causes" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".affordnace-bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div style="position:relative;"><img src="/img/tucker_ellis_1998_fig1.jpg" style="clip: auto; position: absolute; max-width:720px; max-height:550px;"/></div><p class="source"><span class='grey-text'>Tucker &#38; Ellis (1998, p. figure 1)</span></p><div class="notes">Task is to judge whether right-way-up or up-side-down.
+Responses are left–right keypress.
+
+</div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="fig"><div style="position:relative;"><img src="/img/tucker_ellis_1998_fig2.jpg" style="clip: auto; position: absolute; max-width:720px; max-height:550px;"/></div></div><div class="dv dv-style" data-what=".fig img" data-css="{&quot;filter&quot;:&quot;invert(1)&quot;}"></div><p class="source"><span class='grey-text'>Tucker &#38; Ellis (1998, p. figure 2)</span></p></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647 402" width="366" height="420">
+  <defs>
+    <style class="style-fonts">
+      @font-face {
+        font-family: "Virgil";
+        src: url("/fonts/Virgil.woff2");
+      }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="366" height="400" fill="#000"></rect>
+  <g stroke-linecap="round" transform="translate(10 10) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C63.05 0.41, 96.88 -0.01, 140.99 0 M29.88 0 C58.83 0.98, 87.68 1.15, 140.99 0 M140.99 0 C159.06 -0.59, 169.45 11.88, 170.87 29.88 M140.99 0 C160.88 -1.43, 169.9 9.26, 170.87 29.88 M170.87 29.88 C171.25 45.58, 172.16 60.6, 170.87 89.65 M170.87 29.88 C171.59 49.71, 171.57 69.3, 170.87 89.65 M170.87 89.65 C169.17 109.72, 160.73 121.23, 140.99 119.53 M170.87 89.65 C171.56 111.31, 162.51 119.69, 140.99 119.53 M140.99 119.53 C107.6 119.22, 76.98 118.42, 29.88 119.53 M140.99 119.53 C111.32 119.23, 82.25 120.25, 29.88 119.53 M29.88 119.53 C10.84 119.65, -1.19 109.08, 0 89.65 M29.88 119.53 C11.73 119.74, -1.67 107.28, 0 89.65 M0 89.65 C-0.87 70.48, -1.05 48.98, 0 29.88 M0 89.65 C0.16 75.21, -1.24 61.55, 0 29.88 M0 29.88 C1.97 10.38, 11.78 -0.95, 29.88 0 M0 29.88 C-2.13 11.31, 9.95 0.18, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(27.855224609375 18.9739990234375) rotate(0 67.36795043945312 52.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">intention: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">add egg </text>
+    <text x="0" y="70" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">to sauce</text>
+  </g>
+  <g stroke-linecap="round" transform="translate(19.10400390625 251.4613800048828) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C67.39 0.83, 108.17 0.74, 140.99 0 M29.88 0 C72.19 0.39, 114.41 0.26, 140.99 0 M140.99 0 C159.68 -1.42, 170.33 10.74, 170.87 29.88 M140.99 0 C160.72 1.77, 170.14 9.89, 170.87 29.88 M170.87 29.88 C170.49 47.21, 170.46 68.18, 170.87 89.65 M170.87 29.88 C171.19 46.51, 171.28 64.62, 170.87 89.65 M170.87 89.65 C171.25 108.35, 160.14 119.79, 140.99 119.53 M170.87 89.65 C172.15 110.74, 160.06 118.15, 140.99 119.53 M140.99 119.53 C106.68 122.04, 72.55 119.03, 29.88 119.53 M140.99 119.53 C113.67 117.55, 86.81 117.84, 29.88 119.53 M29.88 119.53 C8.77 119.57, -2 111.5, 0 89.65 M29.88 119.53 C7.93 121.02, 0.84 108.84, 0 89.65 M0 89.65 C0.36 70.92, 0.91 49.91, 0 29.88 M0 89.65 C-0.69 69.61, -0.06 52.06, 0 29.88 M0 29.88 C-1.63 7.99, 9.84 0.37, 29.88 0 M0 29.88 C1.37 8.59, 9.61 0.97, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(212.53192138671875 491.7337188720703) rotate(0 65.56198120117188 35)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">grasp egg</text>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M0.68 -0.39 C9.56 20.99, 43.85 106.5, 52.52 127.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M31.81 103.56 C37.47 109.06, 41.76 114.53, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M50.84 95.88 C51.97 103.31, 51.75 110.6, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M-0.24 0.58 C8.54 21.87, 44.06 105.77, 53 126.88" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M33.53 103.75 C37.88 111.65, 45.17 118.21, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M52.43 95.75 C50.54 106.23, 51.65 115.4, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g transform="translate(129.09555053710938 275.4708251953125) rotate(0 52.91996765136719 17.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">[things]</text>
+  </g>
+  <g class='alt-mr'>
+    <g transform="translate(400.7220764160156 494.02398681640625) rotate(0 65.5479736328125 35)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+      <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">roll egg</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(194.9375 486) rotate(0 87.76006629429759 47.5956055100076)">
+        <path d="M-0.89 -0.93 C28.69 14.75, 146.8 78.75, 176.41 94.98 M0.85 1.19 C30.36 16.93, 146.21 80.57, 175.43 96.12" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(354.35790362525745 485.5197509353047) rotate(0 -88.92537043262286 48.04877564234664)">
+        <path d="M-1.2 -0.76 C-30.69 15.23, -147.75 79.2, -177 95.46 M0.38 1.46 C-29.32 17.67, -148.56 81.26, -178.23 96.85" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M0.11 0.45 C35.75 24.37, 178.79 118.85, 214.42 142.76" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M186.01 137.59 C194.24 139.17, 206.25 139.62, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M197.38 120.5 C201.55 128.02, 209.62 134.4, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(244.7337641668612 396.3780157975076) rotate(0 -23.002812804172066 12.72372464461887)">
+        <path d="M-1.1 0.81 C-8.64 4.75, -38.54 19.99, -45.95 24.27 M0.52 0.19 C-7.04 4.19, -38.81 21.16, -46.52 25.26" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(202.3008766602619 396.2509989787512) rotate(0 23.69761072518517 12.736041977728519)">
+        <path d="M0.72 -1.05 C8.86 3.24, 40.08 22.13, 47.76 26.52 M-0.36 1.02 C7.81 4.93, 39.64 20.76, 47.38 25.03" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+  </g>
+
+  <g class='other-causes'>
+    <g stroke-linecap="round">
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M-0.05 -0.25 C13.76 68.84, 69.26 345.2, 82.95 413.92" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M66.94 388.83 C73.2 395.24, 74.91 405.91, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M87.06 384.8 C87.14 392.44, 82.67 404.34, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(271.6523895263672 10.525738688586216) rotate(0 75.24996185302734 17.5)">
+      <text class='affordance' x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">affordance</text>
+    </g>
+
+    <g class='affordnace-bkg hide' stroke-linecap="round">
+      <g stroke-linecap="round" transform="translate(240.05012893676758 0) rotate(0 99.285400390625 27.1927490234375)">
+        <path d="M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.49 11.89 C3.36 9.56, 5.21 8.43, 8.05 4.35 M1.49 11.89 C3.38 9.8, 5.56 7.29, 8.05 4.35 M1.88 17.54 C7.47 10.7, 11.28 5.45, 15.66 1.69 M1.88 17.54 C5.33 12.85, 8.93 8.97, 15.66 1.69 M1.62 23.94 C5.52 16.53, 9.56 11.98, 20.65 2.05 M1.62 23.94 C6.96 17.05, 15 10.01, 20.65 2.05 M1.36 30.33 C8.45 23.34, 16.03 16.07, 26.29 1.65 M1.36 30.33 C8.41 21.94, 17.62 11.15, 26.29 1.65 M1.76 35.98 C10.86 25.86, 22.86 11.44, 31.28 2.01 M1.76 35.98 C10.53 26.88, 17.75 16.4, 31.28 2.01 M1.49 42.37 C10.84 30.93, 25.11 17.36, 36.92 1.62 M1.49 42.37 C12.42 29.42, 22.15 17.82, 36.92 1.62 M3.2 46.51 C15.79 31.14, 29.06 15.64, 41.91 1.98 M3.2 46.51 C17.49 29.9, 32.85 13.94, 41.91 1.98 M4.25 51.4 C19.22 36.36, 30.64 18.71, 47.55 1.59 M4.25 51.4 C13.56 40.33, 22.03 30.67, 47.55 1.59 M7.93 53.27 C16.64 40.3, 29.67 28.84, 52.54 1.95 M7.93 53.27 C21.03 38.9, 32.84 23.34, 52.54 1.95 M12.91 53.63 C30.14 36.06, 44.33 13.76, 57.53 2.31 M12.91 53.63 C26.08 38.99, 40.45 22.92, 57.53 2.31 M18.56 53.23 C29.6 43.26, 38.93 30.57, 63.17 1.91 M18.56 53.23 C36.44 33.96, 53.56 13.58, 63.17 1.91 M23.54 53.59 C35.61 38.84, 49.45 26.2, 68.16 2.27 M23.54 53.59 C38.59 35.87, 52.43 19.58, 68.16 2.27 M28.53 53.95 C45.26 32.4, 65 11.89, 73.8 1.88 M28.53 53.95 C41.3 39.87, 53.28 24.44, 73.8 1.88 M34.17 53.56 C48.57 40.45, 60.02 26.14, 78.79 2.24 M34.17 53.56 C47.14 38.62, 60.76 22.99, 78.79 2.24 M39.16 53.92 C47.8 42.74, 57.4 31.04, 84.43 1.84 M39.16 53.92 C51.32 39.58, 63.49 26.7, 84.43 1.84 M44.8 53.52 C56.07 40.05, 67.36 30.48, 89.42 2.2 M44.8 53.52 C57.73 39.81, 70.94 25.16, 89.42 2.2 M49.79 53.88 C59.58 44.03, 66.89 30.78, 95.06 1.81 M49.79 53.88 C64.24 38.09, 77.5 21.48, 95.06 1.81 M55.43 53.49 C73.44 32.03, 90.27 13.23, 100.05 2.17 M55.43 53.49 C65.6 41.1, 75.91 29.97, 100.05 2.17 M60.42 53.85 C75.56 36.7, 90.77 18.6, 105.03 2.53 M60.42 53.85 C72.23 41.12, 82.71 27.98, 105.03 2.53 M65.41 54.21 C76.32 37.5, 89.77 22.31, 110.68 2.13 M65.41 54.21 C82.78 36.13, 97.56 17.2, 110.68 2.13 M71.05 53.81 C87.67 36.8, 104.27 17.69, 115.66 2.49 M71.05 53.81 C87.23 35.01, 103.95 15.09, 115.66 2.49 M76.04 54.17 C86.82 39.54, 97.86 25.68, 121.31 2.1 M76.04 54.17 C91.92 35.65, 108.03 17.81, 121.31 2.1 M81.68 53.78 C96.84 39.3, 109.55 22.71, 126.29 2.46 M81.68 53.78 C92.09 42.55, 103.63 28.43, 126.29 2.46 M86.67 54.14 C99.3 37.31, 114.97 21.54, 131.94 2.06 M86.67 54.14 C102.65 37.25, 118.07 18.7, 131.94 2.06 M92.31 53.74 C101.51 41.86, 111.8 33.28, 136.92 2.42 M92.31 53.74 C106.74 38.29, 120.26 22.57, 136.92 2.42 M97.3 54.1 C104.89 43.69, 118.39 30.89, 142.57 2.03 M97.3 54.1 C113.14 35.14, 130.88 14.44, 142.57 2.03 M102.94 53.71 C116.52 36.99, 134.91 16.01, 147.55 2.39 M102.94 53.71 C113.7 40.25, 126.29 27.1, 147.55 2.39 M107.93 54.07 C118.19 41.74, 128.25 30.65, 152.54 2.75 M107.93 54.07 C121.71 36.8, 135.65 19.9, 152.54 2.75 M112.92 54.43 C123.92 43.49, 135.89 31.05, 158.18 2.36 M112.92 54.43 C126.05 39.78, 137.82 26.62, 158.18 2.36 M118.56 54.04 C130.46 40.79, 141.14 30.66, 163.17 2.72 M118.56 54.04 C133.55 34.49, 149.22 18.06, 163.17 2.72 M123.55 54.4 C132.34 44.28, 142.86 32.6, 168.81 2.32 M123.55 54.4 C133.66 44.65, 142.37 33.88, 168.81 2.32 M129.19 54 C142.13 36.1, 156.73 19.27, 173.8 2.68 M129.19 54 C141.49 38.48, 154.55 23.76, 173.8 2.68 M134.18 54.36 C142.59 42.44, 152.27 33.31, 179.44 2.29 M134.18 54.36 C149.21 36.38, 165.98 18.4, 179.44 2.29 M139.82 53.97 C149.18 43.96, 161.96 28.59, 184.43 2.65 M139.82 53.97 C150.75 40.71, 161.21 29.43, 184.43 2.65 M144.81 54.33 C158.67 41.72, 169.26 24.7, 191.39 0.74 M144.81 54.33 C160.44 37.9, 174.88 20.93, 191.39 0.74 M150.45 53.93 C164.7 37.44, 176.81 23.38, 194.4 3.37 M150.45 53.93 C166.51 36.64, 181.6 19.78, 194.4 3.37 M155.44 54.29 C164.96 45.92, 173.6 33.61, 197.42 5.99 M155.44 54.29 C168.7 38.72, 182.52 24.99, 197.42 5.99 M160.42 54.65 C174.01 37.56, 190.4 19.5, 198.47 10.88 M160.42 54.65 C169.07 43.45, 178.76 33.33, 198.47 10.88 M166.07 54.26 C176.4 42.96, 184.49 30.99, 198.87 16.52 M166.07 54.26 C175.75 44.27, 184.82 33.83, 198.87 16.52 M171.05 54.62 C179.24 47.22, 186.5 36.04, 198.61 22.92 M171.05 54.62 C178.47 45.85, 186.14 38.9, 198.61 22.92 M176.7 54.22 C180.87 47.81, 184.36 43.8, 198.35 29.32 M176.7 54.22 C180.64 49.44, 185.5 44.91, 198.35 29.32 M181.68 54.58 C183.52 49.77, 186.81 44.96, 198.08 35.72 M181.68 54.58 C188.08 48.59, 192.82 41.34, 198.08 35.72 M186.01 55.7 C189.51 52.45, 191.07 48.99, 197.82 42.11 M186.01 55.7 C190.07 50.45, 193.7 46.68, 197.82 42.11" stroke="#ffd43b" stroke-width="0.5" fill="none"></path>
+        <path d="M13.6 0 M13.6 0 C68.42 0.72, 122.91 -0.37, 184.97 0 M13.6 0 C71.42 -0.71, 128.76 -0.72, 184.97 0 M184.97 0 C193.15 1.4, 200.55 5.67, 198.57 13.6 M184.97 0 C192.31 1.92, 197.86 6.79, 198.57 13.6 M198.57 13.6 C199.45 21.98, 198.51 31.67, 198.57 40.79 M198.57 13.6 C197.71 20.12, 198.99 25.84, 198.57 40.79 M198.57 40.79 C197.29 51.1, 195.81 55.6, 184.97 54.39 M198.57 40.79 C199.83 49.18, 195.01 53.54, 184.97 54.39 M184.97 54.39 C128.71 55.06, 71.6 54.1, 13.6 54.39 M184.97 54.39 C144.14 53.99, 102.03 53.92, 13.6 54.39 M13.6 54.39 C3.75 56.14, 1.24 48.88, 0 40.79 M13.6 54.39 C6.41 55.67, -1.46 48.87, 0 40.79 M0 40.79 C-0.12 32.71, 1.02 23.96, 0 13.6 M0 40.79 C-0.51 31.32, -0.4 21.5, 0 13.6 M0 13.6 C-1.81 2.68, 5.97 1.18, 13.6 0 M0 13.6 C1.04 5.12, 6.64 -2.05, 13.6 0" stroke="#1e1e1e" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+
+    <g transform="translate(479.28783416748047 41.15211197960184) rotate(0 76.99996185302734 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">association</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-0.99 -0.06 C-15.48 64.8, -73.5 324.43, -87.95 389.39" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-91.93 360.38 C-90.22 367.16, -88.93 374.03, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-71.9 364.84 C-74.48 370.51, -77.47 376.42, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(595.5419845581055 93.46909806358622) rotate(0 11.50799560546875 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">...</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-0.22 0.04 C-21.42 55.27, -106.97 276.5, -128.02 332.24" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-127.46 300.54 C-129.26 310.01, -125.63 316.72, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-108.3 307.88 C-114.6 315.61, -115.43 320.6, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+  </g>
+</svg>
+
+
+</div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div style="margin-left:400px"><p class="do-match">✓ intention and motor representation <span class="match">match</span></p><p class="no-match">✗ intention and motor representation fail to match</p></div></div><div class="dv dv-style" data-what=".do-match" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div><div class="dv dv-velocity" data-what=".affordnace-bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="slide"><div class="dv dv-velocity" data-what=".affordnace-bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div><div class="notes">One limit of AHS: it does not show that the intention gives rise to a non-matching
+motor representation (instead it appears that other factors overcome the intention’s influence).</div><div class="notes">By contrast Norman’s croutons (coming later) do show an intention causing a motor representation
+but the wrong one.
+</div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Everyday counterpart is action slips.</div><p>action slips</p><p class="em-above indent">ex Norman’s student’s croutons </p><p class="right"><span class='grey-text'>Norman (1981)</span>; <span class='grey-text'>Mylopoulos (2022)</span></p><div class="notes">‘I was at the end of a salad bar line, sprinkling raisins on my heaping salad, and 
+reached into my left pocket to get a five-dollar bill. The raisins knocked a couple 
+of croutons from the salad to the tray. I reached and picked them up, intending to 
+pop them into my mouth. My hands came up with their respective loads simultaneously, 
+and I rested the hand with the croutons on the tray and put the bill in my mouth, 
+actually tasting it before I stopped myself.’
+<span class='grey-text'>(Norman, 1981, p. 10)</span>
+[this was a student]
+
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/norman-croutons.jpg" width="1024px" style="object-fit: contain; height: 600px; width:800px; "/><div class="words"><div class="container_12"><div class="grid_12"><p class="source">bing.com ai / <span class='grey-text'>Norman (1981, p. 10)</span></p><div class="notes">[source:] https://www.bing.com/images/create/anime-create-a-four-panel-comic-depicing-this-stor/1-656222512eb74c629cf230e655e63ee3?id=dZMlKTDnkpWAFeSDic5R%2bw%3d%3d&view=detailv2&idpp=genimg&FORM=GCRIDP&mode=overlay</div><div class="notes">Norman’s (Student’s) Croutons</div><div class="notes">‘I was at the end of a salad bar line, sprinkling raisins on my heaping salad, and 
+reached into my left pocket to get a five-dollar bill. The raisins knocked a couple 
+of croutons from the salad to the tray. I reached and picked them up, intending to 
+pop them into my mouth. My hands came up with their respective loads simultaneously, 
+and I rested the hand with the croutons on the tray and put the bill in my mouth, 
+actually tasting it before I stopped myself.’
+<span class='grey-text'>(Norman, 1981, p. 10)</span>
+[this was a student]
+
+</div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647 402" width="366" height="420">
+  <defs>
+    <style class="style-fonts">
+      @font-face {
+        font-family: "Virgil";
+        src: url("/fonts/Virgil.woff2");
+      }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="366" height="400" fill="#000"></rect>
+  <g stroke-linecap="round" transform="translate(10 10) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C63.05 0.41, 96.88 -0.01, 140.99 0 M29.88 0 C58.83 0.98, 87.68 1.15, 140.99 0 M140.99 0 C159.06 -0.59, 169.45 11.88, 170.87 29.88 M140.99 0 C160.88 -1.43, 169.9 9.26, 170.87 29.88 M170.87 29.88 C171.25 45.58, 172.16 60.6, 170.87 89.65 M170.87 29.88 C171.59 49.71, 171.57 69.3, 170.87 89.65 M170.87 89.65 C169.17 109.72, 160.73 121.23, 140.99 119.53 M170.87 89.65 C171.56 111.31, 162.51 119.69, 140.99 119.53 M140.99 119.53 C107.6 119.22, 76.98 118.42, 29.88 119.53 M140.99 119.53 C111.32 119.23, 82.25 120.25, 29.88 119.53 M29.88 119.53 C10.84 119.65, -1.19 109.08, 0 89.65 M29.88 119.53 C11.73 119.74, -1.67 107.28, 0 89.65 M0 89.65 C-0.87 70.48, -1.05 48.98, 0 29.88 M0 89.65 C0.16 75.21, -1.24 61.55, 0 29.88 M0 29.88 C1.97 10.38, 11.78 -0.95, 29.88 0 M0 29.88 C-2.13 11.31, 9.95 0.18, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(27.855224609375 18.9739990234375) rotate(0 67.36795043945312 52.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">intention: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">add egg </text>
+    <text x="0" y="70" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">to sauce</text>
+  </g>
+  <g stroke-linecap="round" transform="translate(19.10400390625 251.4613800048828) rotate(0 85.43695068359375 59.76390075683594)">
+    <path d="M29.88 0 M29.88 0 C67.39 0.83, 108.17 0.74, 140.99 0 M29.88 0 C72.19 0.39, 114.41 0.26, 140.99 0 M140.99 0 C159.68 -1.42, 170.33 10.74, 170.87 29.88 M140.99 0 C160.72 1.77, 170.14 9.89, 170.87 29.88 M170.87 29.88 C170.49 47.21, 170.46 68.18, 170.87 89.65 M170.87 29.88 C171.19 46.51, 171.28 64.62, 170.87 89.65 M170.87 89.65 C171.25 108.35, 160.14 119.79, 140.99 119.53 M170.87 89.65 C172.15 110.74, 160.06 118.15, 140.99 119.53 M140.99 119.53 C106.68 122.04, 72.55 119.03, 29.88 119.53 M140.99 119.53 C113.67 117.55, 86.81 117.84, 29.88 119.53 M29.88 119.53 C8.77 119.57, -2 111.5, 0 89.65 M29.88 119.53 C7.93 121.02, 0.84 108.84, 0 89.65 M0 89.65 C0.36 70.92, 0.91 49.91, 0 29.88 M0 89.65 C-0.69 69.61, -0.06 52.06, 0 29.88 M0 29.88 C-1.63 7.99, 9.84 0.37, 29.88 0 M0 29.88 C1.37 8.59, 9.61 0.97, 29.88 0" stroke="transparent" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(212.53192138671875 491.7337188720703) rotate(0 65.56198120117188 35)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+    <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">grasp egg</text>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M0.68 -0.39 C9.56 20.99, 43.85 106.5, 52.52 127.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M31.81 103.56 C37.47 109.06, 41.76 114.53, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(106.953125 133.3125) rotate(0 26.603454708680516 63.71518461145462)">
+      <path d="M50.84 95.88 C51.97 103.31, 51.75 110.6, 52.04 126.08" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g stroke-linecap="round">
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M-0.24 0.58 C8.54 21.87, 44.06 105.77, 53 126.88" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M33.53 103.75 C37.88 111.65, 45.17 118.21, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+    <g transform="translate(201.09655749835076 338.5341440018267) rotate(0 26.37956904135646 63.73013721145685)">
+      <path d="M52.43 95.75 C50.54 106.23, 51.65 115.4, 53.57 126.68" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+    </g>
+  </g>
+  <g transform="translate(129.09555053710938 275.4708251953125) rotate(0 52.91996765136719 17.5)">
+    <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">[things]</text>
+  </g>
+  <g class='alt-mr'>
+    <g transform="translate(400.7220764160156 494.02398681640625) rotate(0 65.5479736328125 35)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">motor r.: </text>
+      <text x="0" y="35" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">roll egg</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(194.9375 486) rotate(0 87.76006629429759 47.5956055100076)">
+        <path d="M-0.89 -0.93 C28.69 14.75, 146.8 78.75, 176.41 94.98 M0.85 1.19 C30.36 16.93, 146.21 80.57, 175.43 96.12" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(354.35790362525745 485.5197509353047) rotate(0 -88.92537043262286 48.04877564234664)">
+        <path d="M-1.2 -0.76 C-30.69 15.23, -147.75 79.2, -177 95.46 M0.38 1.46 C-29.32 17.67, -148.56 81.26, -178.23 96.85" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M0.11 0.45 C35.75 24.37, 178.79 118.85, 214.42 142.76" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M186.01 137.59 C194.24 139.17, 206.25 139.62, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(206.10065556801857 336.29549755416815) rotate(0 107.26446414627131 71.60202121697364)">
+        <path d="M197.38 120.5 C201.55 128.02, 209.62 134.4, 214.09 143.82" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(244.7337641668612 396.3780157975076) rotate(0 -23.002812804172066 12.72372464461887)">
+        <path d="M-1.1 0.81 C-8.64 4.75, -38.54 19.99, -45.95 24.27 M0.52 0.19 C-7.04 4.19, -38.81 21.16, -46.52 25.26" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(202.3008766602619 396.2509989787512) rotate(0 23.69761072518517 12.736041977728519)">
+        <path d="M0.72 -1.05 C8.86 3.24, 40.08 22.13, 47.76 26.52 M-0.36 1.02 C7.81 4.93, 39.64 20.76, 47.38 25.03" stroke="#e03131" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+  </g>
+
+  <g class='other-causes'>
+    <g stroke-linecap="round">
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M-0.05 -0.25 C13.76 68.84, 69.26 345.2, 82.95 413.92" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M66.94 388.83 C73.2 395.24, 74.91 405.91, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(361.9678509172053 61.179210635675076) rotate(0 41.4486750375479 206.8384528089315)">
+        <path d="M87.06 384.8 C87.14 392.44, 82.67 404.34, 84.13 415.37" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(271.6523895263672 10.525738688586216) rotate(0 75.24996185302734 17.5)">
+      <text class='affordance' x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">affordance</text>
+    </g>
+
+    <g class='affordnace-bkg hide' stroke-linecap="round">
+      <g stroke-linecap="round" transform="translate(240.05012893676758 0) rotate(0 99.285400390625 27.1927490234375)">
+        <path d="M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.75 5.5 C1.75 5.5, 1.75 5.5, 1.75 5.5 M1.49 11.89 C3.36 9.56, 5.21 8.43, 8.05 4.35 M1.49 11.89 C3.38 9.8, 5.56 7.29, 8.05 4.35 M1.88 17.54 C7.47 10.7, 11.28 5.45, 15.66 1.69 M1.88 17.54 C5.33 12.85, 8.93 8.97, 15.66 1.69 M1.62 23.94 C5.52 16.53, 9.56 11.98, 20.65 2.05 M1.62 23.94 C6.96 17.05, 15 10.01, 20.65 2.05 M1.36 30.33 C8.45 23.34, 16.03 16.07, 26.29 1.65 M1.36 30.33 C8.41 21.94, 17.62 11.15, 26.29 1.65 M1.76 35.98 C10.86 25.86, 22.86 11.44, 31.28 2.01 M1.76 35.98 C10.53 26.88, 17.75 16.4, 31.28 2.01 M1.49 42.37 C10.84 30.93, 25.11 17.36, 36.92 1.62 M1.49 42.37 C12.42 29.42, 22.15 17.82, 36.92 1.62 M3.2 46.51 C15.79 31.14, 29.06 15.64, 41.91 1.98 M3.2 46.51 C17.49 29.9, 32.85 13.94, 41.91 1.98 M4.25 51.4 C19.22 36.36, 30.64 18.71, 47.55 1.59 M4.25 51.4 C13.56 40.33, 22.03 30.67, 47.55 1.59 M7.93 53.27 C16.64 40.3, 29.67 28.84, 52.54 1.95 M7.93 53.27 C21.03 38.9, 32.84 23.34, 52.54 1.95 M12.91 53.63 C30.14 36.06, 44.33 13.76, 57.53 2.31 M12.91 53.63 C26.08 38.99, 40.45 22.92, 57.53 2.31 M18.56 53.23 C29.6 43.26, 38.93 30.57, 63.17 1.91 M18.56 53.23 C36.44 33.96, 53.56 13.58, 63.17 1.91 M23.54 53.59 C35.61 38.84, 49.45 26.2, 68.16 2.27 M23.54 53.59 C38.59 35.87, 52.43 19.58, 68.16 2.27 M28.53 53.95 C45.26 32.4, 65 11.89, 73.8 1.88 M28.53 53.95 C41.3 39.87, 53.28 24.44, 73.8 1.88 M34.17 53.56 C48.57 40.45, 60.02 26.14, 78.79 2.24 M34.17 53.56 C47.14 38.62, 60.76 22.99, 78.79 2.24 M39.16 53.92 C47.8 42.74, 57.4 31.04, 84.43 1.84 M39.16 53.92 C51.32 39.58, 63.49 26.7, 84.43 1.84 M44.8 53.52 C56.07 40.05, 67.36 30.48, 89.42 2.2 M44.8 53.52 C57.73 39.81, 70.94 25.16, 89.42 2.2 M49.79 53.88 C59.58 44.03, 66.89 30.78, 95.06 1.81 M49.79 53.88 C64.24 38.09, 77.5 21.48, 95.06 1.81 M55.43 53.49 C73.44 32.03, 90.27 13.23, 100.05 2.17 M55.43 53.49 C65.6 41.1, 75.91 29.97, 100.05 2.17 M60.42 53.85 C75.56 36.7, 90.77 18.6, 105.03 2.53 M60.42 53.85 C72.23 41.12, 82.71 27.98, 105.03 2.53 M65.41 54.21 C76.32 37.5, 89.77 22.31, 110.68 2.13 M65.41 54.21 C82.78 36.13, 97.56 17.2, 110.68 2.13 M71.05 53.81 C87.67 36.8, 104.27 17.69, 115.66 2.49 M71.05 53.81 C87.23 35.01, 103.95 15.09, 115.66 2.49 M76.04 54.17 C86.82 39.54, 97.86 25.68, 121.31 2.1 M76.04 54.17 C91.92 35.65, 108.03 17.81, 121.31 2.1 M81.68 53.78 C96.84 39.3, 109.55 22.71, 126.29 2.46 M81.68 53.78 C92.09 42.55, 103.63 28.43, 126.29 2.46 M86.67 54.14 C99.3 37.31, 114.97 21.54, 131.94 2.06 M86.67 54.14 C102.65 37.25, 118.07 18.7, 131.94 2.06 M92.31 53.74 C101.51 41.86, 111.8 33.28, 136.92 2.42 M92.31 53.74 C106.74 38.29, 120.26 22.57, 136.92 2.42 M97.3 54.1 C104.89 43.69, 118.39 30.89, 142.57 2.03 M97.3 54.1 C113.14 35.14, 130.88 14.44, 142.57 2.03 M102.94 53.71 C116.52 36.99, 134.91 16.01, 147.55 2.39 M102.94 53.71 C113.7 40.25, 126.29 27.1, 147.55 2.39 M107.93 54.07 C118.19 41.74, 128.25 30.65, 152.54 2.75 M107.93 54.07 C121.71 36.8, 135.65 19.9, 152.54 2.75 M112.92 54.43 C123.92 43.49, 135.89 31.05, 158.18 2.36 M112.92 54.43 C126.05 39.78, 137.82 26.62, 158.18 2.36 M118.56 54.04 C130.46 40.79, 141.14 30.66, 163.17 2.72 M118.56 54.04 C133.55 34.49, 149.22 18.06, 163.17 2.72 M123.55 54.4 C132.34 44.28, 142.86 32.6, 168.81 2.32 M123.55 54.4 C133.66 44.65, 142.37 33.88, 168.81 2.32 M129.19 54 C142.13 36.1, 156.73 19.27, 173.8 2.68 M129.19 54 C141.49 38.48, 154.55 23.76, 173.8 2.68 M134.18 54.36 C142.59 42.44, 152.27 33.31, 179.44 2.29 M134.18 54.36 C149.21 36.38, 165.98 18.4, 179.44 2.29 M139.82 53.97 C149.18 43.96, 161.96 28.59, 184.43 2.65 M139.82 53.97 C150.75 40.71, 161.21 29.43, 184.43 2.65 M144.81 54.33 C158.67 41.72, 169.26 24.7, 191.39 0.74 M144.81 54.33 C160.44 37.9, 174.88 20.93, 191.39 0.74 M150.45 53.93 C164.7 37.44, 176.81 23.38, 194.4 3.37 M150.45 53.93 C166.51 36.64, 181.6 19.78, 194.4 3.37 M155.44 54.29 C164.96 45.92, 173.6 33.61, 197.42 5.99 M155.44 54.29 C168.7 38.72, 182.52 24.99, 197.42 5.99 M160.42 54.65 C174.01 37.56, 190.4 19.5, 198.47 10.88 M160.42 54.65 C169.07 43.45, 178.76 33.33, 198.47 10.88 M166.07 54.26 C176.4 42.96, 184.49 30.99, 198.87 16.52 M166.07 54.26 C175.75 44.27, 184.82 33.83, 198.87 16.52 M171.05 54.62 C179.24 47.22, 186.5 36.04, 198.61 22.92 M171.05 54.62 C178.47 45.85, 186.14 38.9, 198.61 22.92 M176.7 54.22 C180.87 47.81, 184.36 43.8, 198.35 29.32 M176.7 54.22 C180.64 49.44, 185.5 44.91, 198.35 29.32 M181.68 54.58 C183.52 49.77, 186.81 44.96, 198.08 35.72 M181.68 54.58 C188.08 48.59, 192.82 41.34, 198.08 35.72 M186.01 55.7 C189.51 52.45, 191.07 48.99, 197.82 42.11 M186.01 55.7 C190.07 50.45, 193.7 46.68, 197.82 42.11" stroke="#ffd43b" stroke-width="0.5" fill="none"></path>
+        <path d="M13.6 0 M13.6 0 C68.42 0.72, 122.91 -0.37, 184.97 0 M13.6 0 C71.42 -0.71, 128.76 -0.72, 184.97 0 M184.97 0 C193.15 1.4, 200.55 5.67, 198.57 13.6 M184.97 0 C192.31 1.92, 197.86 6.79, 198.57 13.6 M198.57 13.6 C199.45 21.98, 198.51 31.67, 198.57 40.79 M198.57 13.6 C197.71 20.12, 198.99 25.84, 198.57 40.79 M198.57 40.79 C197.29 51.1, 195.81 55.6, 184.97 54.39 M198.57 40.79 C199.83 49.18, 195.01 53.54, 184.97 54.39 M184.97 54.39 C128.71 55.06, 71.6 54.1, 13.6 54.39 M184.97 54.39 C144.14 53.99, 102.03 53.92, 13.6 54.39 M13.6 54.39 C3.75 56.14, 1.24 48.88, 0 40.79 M13.6 54.39 C6.41 55.67, -1.46 48.87, 0 40.79 M0 40.79 C-0.12 32.71, 1.02 23.96, 0 13.6 M0 40.79 C-0.51 31.32, -0.4 21.5, 0 13.6 M0 13.6 C-1.81 2.68, 5.97 1.18, 13.6 0 M0 13.6 C1.04 5.12, 6.64 -2.05, 13.6 0" stroke="#1e1e1e" stroke-width="1" fill="none"></path>
+      </g>
+    </g>
+
+    <g transform="translate(479.28783416748047 41.15211197960184) rotate(0 76.99996185302734 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">association</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-0.99 -0.06 C-15.48 64.8, -73.5 324.43, -87.95 389.39" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-91.93 360.38 C-90.22 367.16, -88.93 374.03, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(549.3293553579599 86.14407298902972) rotate(0 -44.469580470398114 194.66358411796386)">
+        <path d="M-71.9 364.84 C-74.48 370.51, -77.47 376.42, -85.95 391.09" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+    <g transform="translate(595.5419845581055 93.46909806358622) rotate(0 11.50799560546875 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">...</text>
+    </g>
+    <g stroke-linecap="round">
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-0.22 0.04 C-21.42 55.27, -106.97 276.5, -128.02 332.24" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-127.46 300.54 C-129.26 310.01, -125.63 316.72, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+      <g transform="translate(601.9412754166872 146.2735925589036) rotate(0 -64.11876995451752 166.1373492170125)">
+        <path d="M-108.3 307.88 C-114.6 315.61, -115.43 320.6, -127.95 331.26" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 5"></path>
+      </g>
+    </g>
+  </g>
+</svg>
+
+
+</div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div style="margin-left:400px"><p class="do-match">✓ intention and motor representation <span class="match">match</span></p><p class="no-match">✗ intention and motor representation fail to match</p></div></div><div class="dv dv-style" data-what=".do-match" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div><div class="notes">Action slips overcom the limit of AHS: they do not show that the intention gives rise to a non-matching
+motor representation (in the sense that the intention clearly plays some role—the actions are not
+entirely contrary to the intention).
+</div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p><span>‘both mundane cases of </span><span class="action-slips">action slips</span><span> and pathological conditions, such as </span><span class="apraxia">apraxia</span><span> or </span><span class="ahs">anarchic hand syndrome (AHS)</span><span>, illustrate the existence of an </span><span class="ip">interface problem</span><span>.’</span></p><p class="grey-text right">Mylopoulos and Pacherie (2016, p. 7)</p><div class="slide"><div class="dv dv-addclass" data-what=".apraxia" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".apraxia" data-cls="bkg-invert"></div><div class="notes">Jeannerod 2006, p. 12:
+‘the term apraxia was coined by Liepmann to account for higher order motor
+disorders observed in patients who, in spite of having no problem in executing
+simple actions (e.g. grasping an object), fail in actions involving more
+complex, and perhaps more conceptual, representations.’</div><div class="notes">Can people with ideomotor apraxia form intentions?</div><div class="notes"><span class='grey-text'>Marchetti &#38; Sala (1997, p. 341)</span>: ‘Apraxia is generally defined by default as a disorder in the purposeful execution of movements which cannot be explained by elementary motor or sensory deficits or cognitive impairment (De Renzi, 1989).’</div><div class="notes">Apraxia maybe best thought of as continuous with action slips.</div><div class="notes">Compare <span class='grey-text'>Mayer, Reed, Schwartz, Montgomery, &#38; Palmer (1990, p. 263)</span>:
+‘our observations suggest that there is a continuum of executive
+impairment, such that at the most severe end, patients experience
+difficulties with planning and organizing in even the most routine
+(ADL) tasks and are incapable of engaging in higher-level, nonroutine
+activities. With recovery, or less severe impairment, the patient
+may carry out ADL tasks normally but break down where more extensive
+planning and organization is required (e.g., managing family
+budgets).’</div><div class="notes">Their examples include eating breakfast cerial with a fork,
+putting on trousers before underwear and putting pepper into
+milk or custard on to bread, 
+and putting toothpaste onto razor
+<span class='grey-text'>(Mayer et al., 1990, p. table 11–1, 262)</span>.</div></div><div class="slide"><div class="dv dv-removeclass" data-what=".apraxia" data-cls="bkg-invert"></div><div class="dv dv-addclass" data-what=".ip" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".ip" data-cls="bkg-red"></div><div class="notes">So time to say what it is ...
+</div></div></div></div></div></div></section><div class="handout">The interface problem: explain how intentions and motor representations, with their distinct
+representational formats, are related in such a way that, in at least some cases, the outcomes they
+specify non-accidentally match.
+</div><div class="handout">‘both mundane cases of action slips and pathological conditions, such as apraxia or anarchic hand
+syndrome (AHS), illustrate the existence of an interface problem’ 
+<span class='grey-text'>(Mylopoulos &#38; Pacherie, 2016, p. 7)</span>.
+</div><div class="handout">Two collections of outcomes, A and B, \emph{match} in a particular context just if, in that context,
+either the occurrence of the A-outcomes would normally constitute or cause, at least partially, the
+occurrence of the B-outcomes or vice versa. To illustrate, one way of matching is for the B-outcomes
+to be the A-outcomes. Another way of matching is for the B-outcomes to stand to the A-outcomes as
+elements of a more detailed plan stand to those of a less detailed one.
+
+
+</div><section class="slide"><div class="right-half-white hide" style="z-index:-22;"></div><img class="bkg" src="/img/james-bond-strapped-to-a-spinning-wheel-dall-e.png" width="1024px" style="mix-blend-mode:hard-light; opacity:0.5"/><div style="mix-blend-mode:difference"> <div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="timer-outer" id="timer1"><div class="timer center timer-90s hide"><div class="mask"></div></div><div class="timer-90s-block-wrapper"><div class="timer-90s-block"></div></div></div></div></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}"></div><div class="notes">image is from dall-e</div><div class="layer1"><div class="notes">Imagine that you are strapped to a spinning wheel facing near certain death as it plunges you into
+freezing water. To your right you can see a lever and to your left there is a button. In deciding
+that pulling the lever offers you a better chance of survival than pushing the button, you form an
+intention to pull the lever, hoping that this will stop the wheel. If things go well, and if
+intentions are not mere epiphenomena, this intention will result in your reaching for, grasping and
+pulling the lever. These actions---reaching, grasping and pulling---may be directed to specific
+outcomes in virtue of motor representations which guide their execution. It shouldn't be an accident
+that, in your situation, you both intend to pull a lever and you end up with motor representations
+of reaching for, grasping and pulling that very lever, so that the outcomes specified by your
+intention match those specified by motor representations. If this match between outcomes variously
+specified by intentions and by motor representations is not to be accidental, what could explain it?</div><div class="step1 hide"><div class="clear"></div><div class="words run-across"> <p class="center problem">The Interface Problem:</p><p class="center"><span class="qq hide">How are non-accidental matches possible?</span></p></div><div class="container_12"></div></div><div class="grid_6 words left-half"><div style="padding-right:1em;"><div class="step1 hide"><p>Motor representations specify goals. </p></div><div class="notes">As we have just seen, motor representations specify goals.</div><div class="slide"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".step1" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><p class="em-above">Intentions specify goals.<div class="notes">And of course, so do intentions.</div></p></div><div class="slide"><p class="em-above">Some actions involve both intention and motor representation.</p><div class="notes">Further, many actions involve both intention and motor representation.
+When, for example, you form an intention to turn the lights out, the goal
+of flipping the light switch may be represented motorically in you.</div><div class="notes">The nonaccidental success of our actions therefore depends on the outcomes
+specified by our intentions and motor representations matching.
+</div></div><p class="inf-int hide em-above">Intention and motor representation are not inferentially integrated<span class="format hide"> (because representational format?).</span></p></div></div><div class="grid_6 words invert right-half hide"><div style="padding-left:1em;"><div class="slide"><div class="dv dv-velocity" data-what=".right-half-white, .right-half" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><p>Two  outcomes, A and B, match in a particular context just if, in that context, 
+either the occurrence of A would normally constitute or cause, at least 
+partially, the occurrence of B or vice versa. </p><div class="notes">But how should they match?
+I think they should match in this sense:
+the occurrence of the outcome specified by the motor representation would 
+would normally constitute or cause, at least 
+partially, the occurrence of the outcome specified by the intention.</div></div></div></div><div class="slide"><div class="dv dv-velocity" data-what=".action-slips-etc" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".layer1" data-css="{&quot;blur&quot;:&quot;10px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="notes">We know that they do not always match, but ...</div></div><div class="slide"><div class="dv dv-velocity" data-what=".action-slips-etc" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}"></div><div class="notes">On the other hand, if there are never non-accidental matches 
+then good luck getting off that spinning wheel even if you are right
+about the lever</div></div><div class="slide"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;10px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".layer1" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".qq" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">Now we have to ask, How are nonaccidental matches possible?
+If you asked a similar question about desire and intention, the answer would be 
+straightforward: desire and intention are integrated in practical reasoning, so it 
+is no surprise that what you intend sometimes nonaccidentally conforms to what you intend.
+But we cannot give the same sort of answer in the case of motor representations and 
+intentions because ...</div></div><div class="slide"><div class="dv dv-velocity" data-what=".inf-int" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">Intention and motor representation are not inferentially integrated.</div><div class="notes">Beliefs, desires and intentions are related to the premises and conclusions
+in practical reasoning.  Motor representations are not.
+Similarly, intentions do not feature in motor processes.</div></div><div class="slide"><div class="dv dv-velocity" data-what=".format" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">Failure of inferential integration follows from the claim that they differ in 
+format and are not translated. But I suspect that more people will agree that there is a
+lack of inferential integration than that they differ in representational format.
+(must illustrate format with maps).</div></div><div class="slide"><div class="dv dv-addclass" data-what=".qq" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".qq" data-cls="bkg-pink"></div><div class="notes">So this is the Interface Problem: how do the outcomes specified by intentions and 
+motor representations ever nonaccidentally match?</div></div><div class="slide"><div class="dv dv-removeclass" data-what=".qq" data-cls="bkg-pink"></div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-removeclass" data-what="#timer1 .timer" data-cls="running"></div><div class="notes">Check you understand (lots on solutions)</div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer.hide" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what="#timer1 .timer" data-cls="running"></div></div></div><div class="action-slips-etc hide"><div style="position: absolute; top:-40px; left:-50px; width:800px; height:600px;"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p style="margin-left:200px">action slips<span class="apraxia">, apraxia</span><span class="ahs">, and anarchic hand syndrome</span></p><p class="right grey-text"><span class='grey-text'>(Mylopoulos &#38; Pacherie, 2016, p. 7)</span></p></div></div></div></div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="one">interface problem #1: <br/><span>motor representations vs intentions </span><span class="slide">✓</span></p><div class="slide"><div class="dv dv-velocity" data-what=".one" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><p class="two">interface problem #2: <br/><span>preference vs aversion</span></p></div></div></div></div></div></section></div></body></html>

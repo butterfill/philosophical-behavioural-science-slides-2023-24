@@ -1,0 +1,151 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Bratman on Shared Intentional Action</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="bratman_shared_intention"><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Bratman on Shared Intentional Action</h2></div></div></section><section class="slide"><img class="bkg" src="/img/unit_001/Slide09.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Recall our question, What distinguishes joint actions from parallel but merely individual actions?</div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><p class="center">shared intention</p></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/bkg_bratman.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">As mentioned earlier ...</div><div class="notes handout">‘A first step is to say that what distinguishes you and me from you and the Stranger is that you and
+I share an intention to walk together—we (you and I) intend to walk together—but you and the Stranger
+do not. In modest sociality, joint activity is explained by such a shared intention; whereas no such
+explanation is available for the combined activity of you and the Stranger. This does not, however,
+get us very far; for we do not yet know what a shared intention is, and how it connects up with joint
+action’ <span class='grey-text'>(Bratman, 2009, p. 152)</span>.</div><p><span>‘A first step is to say that what distinguishes’ the sisters cycling together from the strangers </span><span>cycling side by side is </span><span>that the sisters </span><span class="share">share an intention</span><span> to cycle together ... but the strangers </span><span>do not. </span></p><div class="noslide"><p class="em-above"><span>‘This does not, however, </span><span>get us very far; for we do not yet know what a </span><span class="share">shared intention</span><span> is’ </span></p></div><p class="right grey-text">Bratman, 2009 p. 152</p></div></div></div></div></section><section class="slide"><div class="right-half-white" style="z-index:-22;"></div><div class="container_12"><div class="clear"></div><div class="words run-across"><p class="notes handout show center">What is shared intention?</p></div><div class="container_12"></div><div class="slide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="notes handout show">Functional characterisation:</p><div class="functional-characterisation hide"><p class="notes handout show em-above">shared intention serves to <span>(a) coordinate activities, </span><br/><span>(b) coordinate planning, and </span><br/><span>(c) structure bargaining</span></p><div class="step2 hide"><p class="em-above">Constraint:</p><p class="em-above">Inferential integration <span class="step3 hide">... and normative integration (e.g. <span class="agglomeration italic">agglomeration</span><span>)</span></span></p></div></div></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p>Substantial account:</p><div class="substantial-account hide"><p>>>></p><div class="step3 hide"><div class="notes handout show">‘We seek ... a construction of interconnected intentions and other 
+related attitudes ... that would 
+... play the roles characteristic of shared intention.’</div><p class="right grey-text">Bratman (2015, p. 32)</p><div class="notes handout ctd"><span class='grey-text'>(Bratman, 2014, p. 32)</span></div></div></div></div></div></div><div class="slide"><div class="dv dv-velocity" data-what=".functional-characterisation" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes handout">To illustrate: if we share an intention that we cook dinner, this shared intention 
+will (iii) structure bargaining insofar as we may need to decide what to cook or 
+how to cook it on the assumption that we are cooking it together; the shared 
+intention will also require us to (ii) coordinate our planning by each bringing 
+complementary ingredients and tools, and to (i) coordinate our activities by preparing 
+the ingredients in the right order.</div><div class="notes">The functional characterisation is really important: if we accept it, then
+it tells a lot about what shared intentions could and could not be.
+In particular, it either rules out Searle’s account or at least shows that 
+the account is not clearly an account of shared intention because it 
+does not explain how the attitude Searle characterises, the ‘we-intention’
+could coordinate activities, coordinate planning and structure bargaining.</div></div><div class="slide"><div class="dv dv-velocity" data-what=".functional-characterisation .step2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">inferential integration ... [illustrate with planning example 
+where you have to plan both individual and joint action]</div></div><div class="slide"><div class="dv dv-velocity" data-what=".functional-characterisation .step3" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">normative integration (e.g. agglommeration) </div></div><div class="slide"><div class="dv dv-addclass" data-what=".agglomeration" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".agglomeration" data-cls="bkg-invert"></div><div class="notes">[illustrate agglomeration for individual case first, then joint]</div><div class="notes">These points are extremely simple but also extremely powerful.
+They are powerful because they create problems for many approaches 
+to shared agency.  Consider Searle’s view again.  He thinks that shared 
+intentions are not intentions but a new, sui generis kind of attitude
+(which is why he uses the term ‘we-intentions’). 
+If you think this, you have to explain how come the new attitudes are
+inferentially and normatively integrated with ordinary intentions.
+(I’m not saying this can’t be done, just that doing it is challenging,
+and certainly not something that Searle has attempted as far as I know.)</div></div><div class="slide"><div class="dv dv-removeclass" data-what=".agglomeration" data-cls="bkg-invert"></div><div class="dv dv-velocity" data-what=".left-half" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".substantial-account" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">We’ll shortly see how the substantial account is built step by step.
+But maybe it’s helpful to mention the strategy</div></div><div class="slide"><div class="dv dv-velocity" data-what=".substantial-account .step3" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">the construction ...
+
+
+</div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>step 1</p><div class="notes handout show"><p>‘Our shared intention to paint together involves your intention that we paint and my 
+intention that we paint.’</p></div><p class="right grey-text">Bratman (2015, p. 12)</p><div class="notes handout ctd"><span class='grey-text'>(Bratman, 2014, p. 12)</span></div><div class="slide"><p>(Compare the Simple Theory)</p><div class="notes">This is roughly what the Simple Theory said
+This might seem completely innocuous, but it is interestingly controversial.
+</div></div><div class="mafia-case-block em-above"><div class="slide"><p class="em-above"> <span class="mafia-a">the ‘mafia case’<span class="star4">*</span><span class="motivates hide"> motivates ...</span></span><span class="mafia-b hide"> and painting the house different colours motivates ...</span></p></div></div><div class="slide"><div class="dv dv-velocity" data-what=".motivates" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><p class="em-above">step 2</p><p>We each intend that we paint by way of the intentions that we paint<span class="star2">*</span><span class="step2b hide"><span> and by meshing</span><span class="star3">*</span><span> subplans of these intentions.</span></span></p></div><div class="slide"><div class="dv dv-addclass" data-what=".star4" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".star4" data-cls="bkg-invert"></div><div class="notes">Given what I said earlier, I don’t think the mafia case actually motivates step 2.
+But I did provide other cases (the Tarantino walkers and blocking the asile) which
+do seem to motivate step 2.</div></div><div class="slide"><div class="dv dv-removeclass" data-what=".star4" data-cls="bkg-invert"></div><div class="dv dv-addclass" data-what=".star2" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".star2" data-cls="bkg-invert"></div><div class="notes">star: complication ‘and that the route from these intentions to our joint 
+activity satisfies the connection condition’  <span class='grey-text'>(Bratman, 2014, p. 52)</span>.</div><div class="notes">On the connection condition:
+It is ‘the condition that specifies the nature of [the] explanatory relation’ between
+shared intention and joint action <span class='grey-text'>(Bratman, 2014, p. 78)</span>..
+‘the basic idea is that what is central to the connection condition is that each is responsive
+to the intentions and actions of the other in ways that track the intended end of the joint
+action—where all this is out in the open.’ <span class='grey-text'>(Bratman, 2014, p. 79)</span>.</div></div><div class="slide"><div class="dv dv-removeclass" data-what=".star2" data-cls="bkg-invert"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".mafia-a" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".mafia-b" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">We intend to paint the house, but I blue and you red.
+Earlier work: I trick you ...
+In the book: ‘we have a problem. In a case of shared intention we will normally try to resolve that problem by making
+adjustments in one or both of these sub-plans, perhaps by way of bargaining, in the direction of co-possibility. So we want
+our construction to account for is standard social­ norm-responsive functioning of the shared intention.’
+<span class='grey-text'>(Bratman, n.d., p. 53)</span></div></div><div class="slide"><div class="notes">meshing subplans are required</div><div class="dv dv-velocity" data-what=".step2b" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-addclass" data-what=".star3" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".star3" data-cls="bkg-invert"></div><div class="notes">star: meshing</div><div class="notes handout">‘The sub-plans of the participants \emph{mesh} when it is possible that all of these 
+sub-plans taken to­ gether be successfully executed.’
+<span class='grey-text'>(Bratman, 2014, p. 53)</span></div></div><div class="slide"><div class="dv dv-removeclass" data-what=".star3" data-cls="bkg-invert"></div><div class="dv dv-velocity" data-what=".mafia-case-block" data-css="{&quot;opacity&quot;:0,&quot;font-size&quot;:0}" data-options="{&quot;display&quot;:&quot;none&quot;,&quot;duration&quot;:400}"></div><div class="notes">So much for step 2; now we come to the last major step 
+(I’m skipping some details.)</div></div><div class="slide"><p class="em-above"> <span class="why hide">why??</span></p><p class="em-above notes show">step 3</p><div class="notes handout show"><p>‘there is common knowledge among the participants of the conditions cited in this construction’</p></div><p class="right grey-text">Bratman (2015, p. 58)</p><div class="notes handout ctd"><span class='grey-text'>(Bratman, 2014, p. 58)</span></div></div><div class="slide"><div class="dv dv-velocity" data-what=".why" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-addclass" data-what=".why" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".why" data-cls="bkg-red"></div><div class="notes">Why impose the common knowledge condition?
+Before discussing this [I might have to skip discussion of this,
+but there is a useful quote on the handout], let me
+provide a summary of where  we are with Bratman’s account.</div><div class="notes handout">Why require common knowledge in the construction of shared intention?
+‘in shared intention the fact of the shared intention will normally be out in the open: 
+there will be public access to the fact of shared intention. 
+Such public access to the shared intention will normally be involved in further 
+thought that is characteristic of shared intention, as when we plan together how 
+to carry out our shared intention. Since such shared planning about how to carry 
+out our shared intention is part of the normal functioning of that shared intention, 
+we need an element in our construction of shared intention whose functioning 
+supports some such thinking of each about our shared intention.’
+<span class='grey-text'>(Bratman, 2014, p. 57)</span>
+
+</div></div></div></div></div></section><section class="slide"><div class="right-half-white" style="z-index:-22;"></div><div class="container_12"><div class="clear"></div><div class="words run-across"><p class="center" style="margin-bottom:-1em;">What is shared intention?</p></div><div class="container_12"></div><div class="grid_6 words left-half"><div style="padding-right:1em;"><p>Functional characterisation:</p><div class="functional-characterisation"><p>shared intention serves to (a) coordinate activities, (b) coordinate planning and (c) structure bargaining</p><p class="em-above">Constraint:</p><p>Inferential integration<span>... and normative integration (e.g. <span class="agglomeration italic">agglomeration</span><span>)</span></span></p></div></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p>Substantial account:</p><div class="shared-intention-conditions hide"><p>We have a shared intention that we J <span class="sufficient-not-necessary">if</span></p><p class="hem-above condition-1">‘1. (a) <span class="i-intend">I intend</span><span> that </span><span class="we-J">we J</span><span> and (b) </span><span class="you-intend">you intend</span><span> that we J</span></p><p class="hem-above condition-2">‘2. <span class="i-intend">I intend</span><span> that we J </span><span class="in-accordance-with-and-because-of">in accordance with and because of la, lb,</span><span> and meshing subplans of la and lb; </span><span class="you-intend">you intend</span><span> [likewise] …</span></p><p class="hem-above condition-3">‘3. 1 and 2 are common knowledge between us’</p><p class="hem-above right">(Bratman 1993: View 4)</p></div></div></div><div class="slide"><div class="dv dv-velocity" data-what=".shared-intention-conditions" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">These are the conditions that we have been discussing.</div></div><div class="slide"><div class="dv dv-addclass" data-what=".sufficient-not-necessary" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".sufficient-not-necessary" data-cls="bkg-invert"></div><div class="notes">Note that these conditions are offered as sufficient but not necessary.
+(Bratman originally claimed that they were necessary and sufficient, but
+nothing in the construction rules out alternative realisations of the functional
+characterisation of shared intention.)</div><div class="notes">Are sufficient conditions sufficient for achieving Bratman’s aims?
+Bratman’s pitch is this.
+Recall the continuity thesis (‘once God created individual planning agents and ... they 
+have relevant knowledge of each other’s minds, nothing fundamentally new--conceptually, 
+metaphysically, or normatively--needs to be added for there to be modest sociality.’ p.8)
+Bratman reasons that if we can give sufficient conditions for shared agency that
+are consistent with the continuity thesis, then our default assumption should be that
+shared agency does not require concepual, metaphysical or normative innovation.</div><div class="notes">So if we accept Bratman’s sufficient conditions, then we should also accept the 
+continuity thesis.
+(There might issues about whether merely sufficient conditions are enough to fulfil his aim
+of providing a framework for theorising about shared agency; more on this when we 
+come to consider joint action and development.)
+</div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="question"><p class="huge-glow">Question</p><p class="under-huge-glow" style="margin-top:-3em;">What distinguishes joint actions from parallel but merely individual actions?
+</p></div><div class="requirement"><p class="huge-glow">Requirement</p><p class="under-huge-glow" style="margin-top:-3em;">Any account of shared agency must draw a line between joint actions and parallel but 
+merely individual actions.
+</p></div><div class="aim"><p class="huge-glow">Aim</p><p class="under-huge-glow" style="margin-top:-3em;"><span>Theoretical framework for psychology and formal models.</span></p></div><div class="dv dv-velocity" data-what=".requirement, .aim" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:0}"></div><div class="notes">So Bratman provides a candidate answer to the question.</div><div class="slide"><div class="dv dv-velocity" data-what=".requirement" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div><div class="notes">Does the candidate answer avoid counterexamples?</div></div><div class="slide"><div class="dv dv-velocity" data-what=".aim" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div></div><div class="notes">And does Bratman’s candidate answer meet our aim of providing a theoretical framework
+that can help us in investigating for psychology and formal models?
+(I guess we will see later how useful it is, when we come to the psychological discoveries
+and formal models.)</div><div class="notes">Bratman’s theory answers question, so meets requirement and takes us 
+towards the aim.
+
+</div></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="one"><p>short essay question:</p><p class="indent">Why, if at all, do we need a theory of <span class="shared-intention">shared intention</span><span>?</span></p></div><p class="em-above while">(Will be a while before this question makes sense.)</p><div class="two"><p class="em-above">plan d’attaque</p><p class="indent premise">premise: Shared intention can only be understood as the solution to a problem.</p><p class="indent p1">1. What is the Problem of Joint Action? <span class="tick">✓</span></p><p class="indent p2">2. Can we solve the Problem without shared intention? <span class="tick">✓</span></p><p class="indent p3">3. If we do need shared intention, what is the best account available? <span class="tick hide">✓</span></p></div><div class="dv dv-velocity" data-what=".one, .while" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what=".p3" data-cls="bkg-grey-row "></div><div class="slide"><div class="dv dv-removeclass" data-what=".p3" data-cls="bkg-grey-row "></div><div class="dv dv-velocity" data-what=".p3 .tick" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-addclass" data-what=".p3" data-cls="bkg-limegreen-row "></div></div><div class="slide"><div class="dv dv-removeclass" data-what=".p3" data-cls="bkg-limegreen-row "></div></div><div class="slide"><div class="dv dv-velocity" data-what=".two" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".one" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div></div></div></div></div></section></div></body></html>

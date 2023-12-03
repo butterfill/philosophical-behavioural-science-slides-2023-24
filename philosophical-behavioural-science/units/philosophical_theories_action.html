@@ -1,0 +1,154 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Philosophical Theories of Action</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="philosophical_theories_action"><img class="bkg" src="/img/bkg/flowers/DSC_AA_7346.JPG"/><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Philosophical Theories of Action</h2></div></div></section><div class="notes">We have been talking about action without saying anything
+about what that is.</div><div class="notes">(We characterised an instrumental action as an action
+that happens in order to bring about an outcome. 
+This assumes a notion of action.)
+</div><section class="slide"><img class="bkg" src="/img/bacteria_game_theory.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="notes">As I said, the challenge is to discover why people act,
+individually and jointly</div><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p><div class="slide"><div class="dv dv-addclass" data-what=".act" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".act" data-cls="bkg-invert"></div><div class="notes">We have to ask what actions are.</div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">To see why problem is pressing, suppose we just replace `act`
+with `move`.</div><div class="notes">So many things move—rocks, people, plants, continental plates and 
+bacteria—that it makes no sense to look for a general theory about 
+why things move.</div><div class="notes">If we are to have a coherent research project,
+we need a principled way of limiting our enquiry to actions 
+as opposed to movements more generally.</div><div class="notes">Bacteria turn out to behave in suprisingly sophisticated way,
+as do plants and, of course, machines.</div><div class="notes">We would ideally like a principled way of delimiting the
+things we are asking about so that we are not thinking
+above movement generally.</div><div class="notes">image source: https://www.eurekalert.org/news-releases/939340
+
+</div></div></div></div></div></div></section><section class="slide"><div class="falling-clip" style="margin-top:-160px; margin-left:-100px"><video width="1024" height="768" playsinline="playsinline"><source src="/img/three-ages-falling.mp4" type="video/mp4"/></video></div><div class="slide"><script>function getFallingVideo () { return $('.falling-clip video')[0] }
+addAction({ 
+  'doit' : function () {
+    getFallingVideo().play()
+  },
+  'undoit' : function () {
+    getFallingVideo().pause()
+  }
+})</script></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="words"><div class="container_12"><div class="grid_12"><div style="margin-top:120px"><p class="hem-around"><span>What distinguishes your actions from things that merely happen to you? </span><span class="label hide">(‘<span class="the">The</span><span> </span><span class="problem">Problem</span><span>  of Action’)</span></span></p><div class="slide"><div class="dv dv-velocity" data-what=".falling-clip" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".label" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-addclass" data-what=".problem" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".problem" data-cls="bkg-invert"></div><div class="notes">What is a problem?
+A problem is a question that's difficult to answer.</div></div><div class="slide"><div class="dv dv-removeclass" data-what=".problem" data-cls="bkg-invert"></div><div class="notes">What is the difficulty?
+You might think that this question is not difficult at all ...</div></div><div class="slide"><p class="indent">- kinematic features?</p><div class="notes">you might think for example that we can
+answer this question by appeal to some
+kind of kinematic features of actions
+and indeed very often if you're
+observing people
+you can see the difference between
+things that are their actions and things
+that really happen to them just by
+looking at the kinematic features. You
+can see the carefully controlled way in
+which i reach for and grasp that coffee
+cup in front of you taking out of your
+way you can be sure that it's no
+accident that i've removed the coffee
+cup from you too much coffee for you
+this morning</div></div><div class="notes">Kinematic features? Coordination of body parts?
+Falling down stairs vs Buster Keaton stunt.</div></div><div class="slide"><p class="indent">- desired outcomes?</p><div class="notes">Response to Keaton: it wasn’t an action because the outcome (falling off the side
+of the building) was undesired.</div><div class="notes">But of course lots of your actions have undesired consequences.</div><div class="notes">‘I didn’t mean to soak your trousers, I was only trying to fill your glass’
+/ ‘But you did soak my trousers’</div></div><div class="slide"><p class="indent">- coordination of body parts?</p><div class="notes">another thought we might have is we can
+answer this question by saying that actions, and only actions,
+involve kind of coordination of body parts.
+
+
+</div></div></div></div></div></div></section><section class="slide"><div class="right-half-white" style="z-index:-22;"></div><div class="container_12"><div class="notes">[This is an opportunity to talk about the method of contrast cases]</div><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="center">action</p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="center">mere happening</p></div></div><div id="connect_slide"><div class="slide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="hem-above"><span id="intended-fall" style="padding-left:15px;margin-left:-15px;">intended fall</span></p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="hem-above"><span id="accidental-fall" style="padding-left:30px;margin-left:-30px;">accidental fall</span></p></div></div><div class="clear"></div><div class="words run-across"><p class="center"><span class="hide" id="kinematics" style="padding-left:15px;margin-left:-15px;">comparable kinematics</span></p></div><div class="container_12"></div></div><div class="slide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="hem-above" style="margin-top:1em;"><span id="skill-pass" style="padding-left:15px;margin-left:-15px;">skillful execution</span></p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="hem-above" style="margin-top:1em;"><span id="lucky-accident" style="padding-left:30px;margin-left:-30px;">lucky accident</span></p></div></div><div class="clear"></div><div class="words run-across"><p class="center"><span class="hide" id="outcome" style="padding-left:15px;margin-left:-15px;">comparable outcomes</span></p></div><div class="container_12"></div></div><div class="slide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="hem-above" style="margin-top:1em;"><span id="toddler-walking" style="padding-left:15px;margin-left:-15px;">toddler walking</span></p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="hem-above" style="margin-top:1em;"><span id="infant-walking" style="padding-left:30px;margin-left:-30px;">infant walking reflex</span></p></div></div><div class="clear"></div><div class="words run-across"><p class="center"><span class="hide" id="coordination" style="padding-left:15px;margin-left:-15px;">comparable coordination</span></p></div><div class="container_12"></div></div><div class="dv dv-style" data-what=".run-across" data-css="{&quot;padding-top&quot;:&quot;0&quot;}"></div><div class="slide"><div class="dv dv-velocity" data-what="#kinematics" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><script>//- addAction({ 
+//-   'doit' : function () {
+//-     jsPlumb.connect({
+//-       source : $('#kinematics'),
+//-       target : $('#intended-fall'),
+//-       anchors : ["LeftMiddle","LeftMiddle"],
+//-       container: $('#connect_slide')
+//-     });
+//-     jsPlumb.connect({
+//-       source : $('#kinematics'),
+//-       target : $('#accidental-fall'),
+//-       anchors : ["LeftMiddle","LeftMiddle"],
+//-       container: $('#connect_slide')
+//-     });
+//-   },
+//-   'undoit' : function () {
+//-     jsPlumb.reset()
+//-   }
+//- })</script></div><div class="slide"><div class="dv dv-velocity" data-what="#outcome" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what="#coordination" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p class="hem-around"><span>What distinguishes your actions from things that merely happen to you? </span><span class="label">(‘<span class="the">The</span><span> </span><span class="problem">Problem</span><span>  of Action’)</span></span></p><div class="wrong-answers"><p class="indent">- kinematic features?</p><p class="indent">- desired outcomes?</p><p class="indent">- coordination of body parts?</p></div><div class="right-answer hide"><p class="indent">- intention</p></div><div>&nbsp;</div><div class="slide"><div class="dv dv-style" data-what=".wrong-answers p" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".wrong-answers" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".right-answer" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><p class="hem-around standard-answer">Standard Answer: <span>actions are those events which stand in an appropriate causal relation to an intention.</span></p><div class="notes">i think it's fair to
+say that a great deal of philosophy is
+driven by the assumption that this
+answer is correct at core so it should
+be something of great interest to us</div><div class="notes">and the Standard answer does seem to fit out contrast cases ...
+</div></div></div></div></div></section><section class="slide"><div class="right-half-white" style="z-index:-22;"></div><div class="container_12"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="center">action</p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="center">mere happening</p></div></div><div id="connect_slide"><div class="dv dv-velocity" data-what="#kinematics, #outcome, #coordination" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="noslide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="hem-above"><span id="intended-fall" style="padding-left:15px;margin-left:-15px;">intended fall</span></p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="hem-above"><span id="accidental-fall" style="padding-left:30px;margin-left:-30px;">accidental fall</span></p></div></div><div class="clear"></div><div class="words run-across"><p class="center"><span id="kinematics" style="padding-left:15px;margin-left:-15px;">comparable kinematics</span></p></div><div class="container_12"></div></div><div class="noslide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="hem-above" style="margin-top:1em;"><span id="skill-pass" style="padding-left:15px;margin-left:-15px;">skillful execution</span></p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="hem-above" style="margin-top:1em;"><span id="lucky-accident" style="padding-left:30px;margin-left:-30px;">lucky accident</span></p></div></div><div class="clear"></div><div class="words run-across"><p class="center"><span id="outcome" style="padding-left:15px;margin-left:-15px;">comparable outcomes</span></p></div><div class="container_12"></div></div><div class="noslide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="hem-above" style="margin-top:1em;"><span id="toddler-walking" style="padding-left:15px;margin-left:-15px;">toddler walking</span></p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="hem-above" style="margin-top:1em;"><span id="infant-walking" style="padding-left:30px;margin-left:-30px;">infant walking reflex</span></p></div></div><div class="clear"></div><div class="words run-across"><p class="center"><span id="coordination" style="padding-left:15px;margin-left:-15px;">comparable coordination</span></p></div><div class="container_12"></div></div><div class="dv dv-style" data-what=".run-across" data-css="{&quot;padding-top&quot;:&quot;0&quot;}"></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p class="hem-around"><span>What distinguishes your actions from things that merely happen to you? </span><span class="label">(‘<span class="the">The</span><span> </span><span class="problem">Problem</span><span>  of Action’)</span></span></p><div class="wrong-answers"><p class="indent">- kinematic features?</p><p class="indent">- desired outcomes?</p><p class="indent">- coordination of body parts?</p></div><div class="right-answer"><p class="indent">- intention</p></div><div>&nbsp;</div><div class="noslide"><div class="dv dv-style" data-what=".wrong-answers p" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div></div><div class="noslide"><div class="dv dv-velocity" data-what=".wrong-answers" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:0}"></div></div><div class="noslide"><p class="hem-around standard-answer">Standard Answer: <span>actions are those events which stand in an appropriate causal relation to an </span><span class="intention">intention</span><span>.</span></p></div><div class="slide"><p class="hem-around">Causal Theory of Action: <span>an event is action ‘just in case it has a </span><span class="sort">certain sort</span><span> of psychological cause’ <span class='grey-text'>(Bach, 1978, p. 361)</span>.</span></p><div class="notes">the other thing to note here is that
+it's an instance of something even more
+general and even more widely accepted
+this is the so-called causal theory of
+action according to which an action is
+event just in case it has certain sort
+of psychological cause</div><div class="notes">the question for the
+philosophers
+mainly in philosophy of action has been
+what are intentions
+and what is this appropriate causal
+relation.
+There
+has been little debate about whether the
+causal theory and the standard answer
+are actually correct</div></div><div class="slide"><div class="dv dv-addclass" data-what=".intention, .sort" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".intention, .sort" data-cls="bkg-pink"></div></div><div class="slide"><div class="dv dv-removeclass" data-what=".intention, .sort" data-cls="bkg-pink"></div><div class="dv dv-addclass" data-what=".standard-answer" data-cls="bkg-grey-row "></div><div class="notes">So this is the view I will be taking
+as a useful starting point 
+for saying what actions are.
+
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/bacteria_game_theory.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">We did ask what actions are.</div><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p><div class="dv dv-addclass" data-what=".act" data-cls="bkg-invert"></div><div class="slide"><div class="dv dv-removeclass" data-what=".act" data-cls="bkg-invert"></div><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;filter&quot;:&quot;saturate(0) blur(5px)&quot;}"></div><div class="notes">[2023–24 PLAN TO BREAK FOR FIRST HALF OF LECTURE 01 AFTER THIS UNIT]</div></div></div></div></div></div></section></div></body></html>

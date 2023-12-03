@@ -1,0 +1,89 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Introduction</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="introduction_08"><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Introduction</h2></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p>I want to show you</p><p>two interface problems.</p><div class="notes">Each is going to take about half a lecture.
+</div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p>interface problem #1: <br/><span>motor representations vs intentions</span></p></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p>background on motor representation (recap)</p></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="hem-around">roles of motor representation</p><p class="hem-around">1. your intention to add an egg to the bowl triggers a motor representation</p></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/motor_representation_fig_extra/slide01.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/motor_representation_fig_extra/slide02.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/motor_representation_fig_extra/slide03.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/motor_representation_fig_extra/slide04.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/motor_representation_fig_extra/slide05.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">No sure where intention ends and motor representation begins. May vary.
+But intention does not reach all the way down to the joint displacements.
+And intention is usually not concerned with the coordination of your two hands.</div><div class="notes">Most importantly there are cases—skilled action—where intention does not reach
+very far down at all. (For me that’s typing; also think about piano.)
+</div></div></div></div></section><section class="slide"><img class="bkg" src="/img/motor_representation_fig_extra/slide05.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><p class="hem-around">roles of motor representation</p><div class="first hem-around"><p>1. your intention to add an egg to the bowl triggers a motor representation</p><div class="slide"><p class="indent">‘there is more to the causation of an action than its initiation, namely, how it is carried out.’
+<span class='grey-text'>(Bach, 1978, p. 363)</span></p><div class="notes">This is here (a) to show that we are talking about philosophy; and (b) for me to 
+recommend <span class='grey-text'>Bach (1978)</span> as a useful source.</div></div><div class="slide"><div class="notes">Complication: what looks like implementation from higher in the hierachy looks like
+initiation from lower down the hierarchy.</div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what="p" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what="p" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what="p" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what="p" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;duration&quot;:400}"></div></div></div><div class="slide"><div class="dv dv-velocity" data-what=".first" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><p class="hem-around">2. a habitual process links a stimulus to an outcome: the stimlus triggers a motor representation</p><div class="notes">Lever press typically requires sustained coordination of affectors.</div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="clip2 hide" style="margin-top:-160px; margin-left:-100px"><video width="1024" height="768" playsinline="playsinline" loop="loop"><source src="/img/rat-lever.mp4" type="video/mp4"/></video></div></div><div class="slide"><div class="dv dv-velocity" data-what=".clip2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><script>function getClip2 () { return $('.clip2 video')[0] }
+addAction({ 
+  'doit' : function () {
+    getClip2().play()
+  },
+  'undoit' : function () {
+    getClip2().pause()
+  }
+})</script></div><div class="slide"><div class="dv dv-velocity" data-what=".clip2" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-velocity" data-what=".clip2" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/egg.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="hem-around">two questions</p><p class="hem-around first">1. How do we know they are representations?</p><p class="hem-around second">2. What do they represent?</p><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="slide"><div class="dv dv-addclass" data-what=".first" data-cls="bkg-grey-row "></div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">Because they are sensitive to facts about the future concerning which
+there is no environmental information.</div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><div class="dv dv-removeclass" data-what=".first" data-cls="bkg-grey-row "></div><div class="dv dv-addclass" data-what=".second" data-cls="bkg-grey-row "></div></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/carry_information/Slide1.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="grid_6 words left-half"><div style="padding-right:1em;"><p>Markers of motor representation <span class="step2 hide"> ...</span></p><div class="notes">The experiments providing such evidence typically involve a marker of motor representation, 
+such as a pattern of neuronal firings, a motor evoked potential or a behavioural performance 
+profile, which, in controlled settings, allows sameness or difference of motor representation 
+to be distinguished.  Such markers can be exploited to show that the sameness and difference 
+of motor representation is linked to the sameness and difference of an outcome such as the 
+grasping of a particular object.
+(Pioneering uses of this method include <span class='grey-text'>Rizzolatti et al., 1988</span>; <span class='grey-text'>Giacomo Rizzolatti, Fogassi, &#38; Gallese, 2001</span>; 
+it has since been developed in many ways: see, for example,
+<span class='grey-text'>Hamilton &#38; Grafton (2008)</span>; <span class='grey-text'>Cattaneo, Caruana, Jezzini, &#38; Rizzolatti (2009)</span>; <span class='grey-text'>Cattaneo, Sandrini, &#38; Schwarzbach (2010)</span>; <span class='grey-text'>Rochat et al. (2010)</span>; <span class='grey-text'>Bonini et al. (2010)</span>; <span class='grey-text'>Koch et al. (2010)</span>.)</div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".step2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><p>1. are unaffected by variations in kinematic features but not goals</p></div><div class="slide"><div class="dv dv-attr" data-what="img.bkg" data-attr="src" data-value="/img/carry_information/Slide2.jpg"></div><p>2. are affected by variations in goals but not kinematic features</p></div><div class="slide"><div class="dv dv-attr" data-what="img.bkg" data-attr="src" data-value="/img/carry_information/Slide3.jpg"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><p>So: 3. <span class="carry-information">carry information</span><span>  about goals  (from 1,2)</span></p></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;15px&quot;}" data-options="{&quot;duration&quot;:500}"></div><p class="em-above">Also</p><p>4. Information about outcomes guides planning-like processes.</p></div></div></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/egg.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="hem-around">two questions</p><p class="hem-around first">1. How do we know they are representations?</p><p class="hem-around second">2. What do they represent?</p><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-removeclass" data-what=".first" data-cls="bkg-grey-row "></div><div class="dv dv-addclass" data-what=".second" data-cls="bkg-grey-row "></div><div class="slide"><div class="dv dv-removeclass" data-what=".second" data-cls="bkg-grey-row "></div></div></div></div></div></div></section></div></body></html>

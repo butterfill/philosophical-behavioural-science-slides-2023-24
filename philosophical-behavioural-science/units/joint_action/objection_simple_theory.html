@@ -1,0 +1,342 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Objections to the Simple Theory of Joint Action</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="objection_simple_theory"><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Objections to the Simple Theory of Joint Action</h2></div></div></section><section class="slide"><img class="bkg" src="/img/mafia.jpg" width="1024px"/><div class="words"><div style="mix-blend-mode:difference"> <div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="timer-outer" id="timer1"><div class="timer center timer-90s hide"><div class="mask"></div></div><div class="timer-90s-block-wrapper"><div class="timer-90s-block"></div></div></div></div></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12"><div class="handout">Bratman offers a counterexample to something related to the Simple Theory (<span class='grey-text'>Bratman, 1992</span>; <span class='grey-text'>Bratman, 2014</span>). 
+Suppose that you and I each intend that we, you and I, go to New York together.
+But your plan is to point a gun at me and bundle me into the boot (or trunk) of your
+car.
+Then you intend that we go to New York together, but in a way that doesn't 
+depend on my intentions.  As you see things, I'm going to New York with you whether 
+I like it or not. Does this provide the basis for an objection to the Simple Theory?
+
+</div><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;width&quot;:&quot;800px&quot;}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="simple-theory"><p class="em-above">The Simple Theory</p><div class="em-above"><p>Two or more agents perform an <span class="intentional">intentional</span><span> joint action </span><br/><span class="necessary-and-sufficient">exactly when</span><span> there is an </span><span class="act-type">act-type</span><span>, </span><span class="phi">φ</span><span>, such that </span><br/><span>each agent intends that </span><br/><span class="indent">they, these agents, </span><span class="phi">φ</span><span> </span><span class="together">together</span><br/><span> and their intentions are </span><span class="appropriately-related">appropriately related </span><span> to their actions.</span></p></div><div class="notes">Here’s the Simple Theory again.  My aim now is to present the most convincing objection
+to it that I can.
+</div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><p class="em-above">Bratman’s ‘mafia case’</p><div class="notes">Michael Bratman offers a counterexample to something related to the Simple Theory. 
+Suppose that you and I each intend that we, you and I, go to New York together.
+But your plan is to point a gun at me and bundle me into the boot (or trunk) of your
+car.
+Then you intend that we go to New York together, but in a way that doesn't 
+depend on my intentions.  As you see things, I'm going to New York with you whether 
+I like it or not.  This doesn't seem like the basis for shared agency. 
+After all, your plan involves me being abducted. </div><div class="notes">But it is still a case in which we each intend that we go to New York together and we do.
+So, apparently, the conditions of the Simple Theory are met (or almost met) and yet there is
+no shared agency.</div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".simple-theory" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div><p class="indent">1. I intend that we, you and I, go to NYC together.</p><p class="indent">2. You intend that we, you and I, go to NYC together.</p></div><div class="slide"><p class="indent">3. You intend that we, you and I, go to NYC together by way of you forcing me into the back of my car.</p></div><div class="slide"><div class="dv dv-velocity" data-what=".simple-theory" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-removeclass" data-what="#timer1 .timer" data-cls="running"></div><div class="notes">Is this a good counterexample? If not, why not</div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer.hide" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what="#timer1 .timer" data-cls="running"></div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div></div></div><div class="slide"><div class="notes">We’re considering that Bratman’s ‘mafia case’ provides a counterexample to
+the Simple Theory.  But does it really?</div><div class="dv dv-addclass" data-what=".appropriately-related" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".appropriately-related" data-cls="bkg-invert"></div><div class="notes">The mafia case fails as a counterexample to the Simple Theory because if you go through 
+with your plan, my actions won’t be appropriately related to my intention.</div><div class="notes">And, on the other hand, if you don’t go through with your plan, that it is at best
+unclear that your having had that plan matters for whether we have shared agency.</div><div class="notes">I suggest that what is wrong in the Mafia Case is not that the agent’s need further
+intentions, but just that if their intentions don’t connect to their actions in the 
+right way then there won’t be intentional joint action.
+</div><div class="notes">But the mafia case fails as a counterexample to the Simple Theory because if you go through 
+with your plan, my actions won’t be appropriately related to my intention.</div><div class="notes">And, on the other hand, if you don’t go through with your plan, that it is at best
+unclear that your having had that plan matters for whether we exercise shared agency.</div><div class="notes">Bratman uses the Mafia case to motivate adding further intentions to 
+those specified by the Simple Theory.
+But I suggest that an alternative response to the Mafia case is no less adequate
+and simpler: what is wrong in the Mafia Case is not that the agents need further
+intentions, but just that, if they act as they intend, their intentions won’t
+all be appropriately related to their actions.</div><div class="notes">So Bratman’s ‘mafia case’ is not a counterexample to the Simple Theory.
+
+</div><div class="slide"><div class="dv dv-removeclass" data-what=".appropriately-related" data-cls="bkg-invert"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="notes">I note that Bratman is clearly aiming to identify intentions whose fulfilment
+requires shared agency. But I don’t think this is necessary. 
+It seems to me that what matters is that the Simple Theory as a whole 
+distingiushes shared agency from parallel but merely individual agency, 
+not that it does so by way of fulfilment conditions of intentions.</div><div class="notes">Rather than continuing to discuss whether the Mafia case really motivates rejecting
+the Simple Theory, let me consider other ways to generate what seem to be more
+plausible candidates for counterexamples to the Simple Theory ...
+
+
+
+
+
+
+</div></div></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/tarantino_walkers.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:&quot;1&quot;}"></div><p class="center">Walking together <span class="step2 hide">in the Tarantino sense</span></p><div class="notes">Here is my attempt to improve on Bratman’s counterexample.
+Contrast friends walking together in the way friends ordinarily walk,
+which is a paradigm example of joint action,
+with two gangsters who walk together like this ...</div><div class="notes">... Gangster 1 pulls a gun on Gangster 2 and says: “let’s walk”
+But Gangster 2 does the same thing to Gangster 1 simultaneously.</div><div class="slide"><div class="dv dv-velocity" data-what=".step2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">We might call this ‘walking together in the Tarrantino sense’.</div><div class="notes">The conditions of the Simple Theory are met both in ordinary walking together
+and in walking together in the Tarantino sense.  [*Discuss ‘appropriately related’].
+So according to the Simple Theory, both are intentional joint actions.</div></div><div class="slide"><p class="em-above">1. I intend that we, you and I, walk together.</p><p class="item2 indent hide">... by means of my forcing you at gun point.</p><p>2. You intend that we, you and I, walk together.</p><p class="item3 indent hide">... by means of you forcing me at gun point.</p></div><div class="slide"><div class="dv dv-velocity" data-what=".item2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".item3" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">The interdependence of the guns means that our actions can be appropriately 
+related to our intentions.
+</div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">Now I wanted to say that walking together in the Tarantino sense
+is not an intentional joint action unless the central event of Reservoir Dogs 
+is also a case of joint action.
+And I think it’s pretty clear that that isn’t a joint action.
+But I was surprised to find that at least two people responded, independently of each other,
+to this suggestion by saying that walking together in the Tarantino sense really is a joint action.</div><div class="notes">My opponent reasoned that each is acting intentionally, and that coercion is no 
+bar to shared agency.
+</div></div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="center">the threat of collapse: trading intuitions</p><div class="notes">Just here we come to a tricky issue.
+There is a danger that we will just end up trying to say something systematic 
+about one or another set of intuitions, where nothing deep underpins these intuitions.</div><div class="notes">I think this is a real threat; you’ll see that most philosophers are not careful
+about their starting point in theorising about shared agency.  They merely give 
+examples or a couple of contrast cases and off they go.
+Adopting this undisciplined approach risks achieving nothing more than 
+organising one’s own intuitions.  (It’s fine to organise intuitions on weekends and evenings,
+but it shouldn’t be your day job.)</div><div class="notes">That’s why I want to go slowly here --- maybe this is very frustrating and you want to get
+into the really exciting, weird and crazy stuff about plural subjects, shared emotions 
+or aggregate animals.  But before we can do this seriously we need some sort of foundation
+that will ensure we aren’t merely organising intuitions.
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/blocking_aisle.jpg" width="1024px"/><div style="mix-blend-mode:difference"> <div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="timer-outer" id="timer1"><div class="timer center timer-90s hide"><div class="mask"></div></div><div class="timer-90s-block-wrapper"><div class="timer-90s-block"></div></div></div></div></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;width&quot;:&quot;800px&quot;}"></div><p class="center">another contrast case: blocking the aisle</p><div class="notes">Imagine two sisters who, getting off an aeroplane, tacitly agree to exact revenge on 
+the unruly mob of drunken hens behind them by standing so as to block the aisle together.
+This is a joint action.
+Meanwhile on another flight, two strangers happen to be so configured that they are 
+collectively blocking the aisle.
+The first passenger correctly anticipates that the other passenger, who is a 
+complete stranger, will not be moving from her current position for some time.
+This creates an opportunity for the first passenger: she intends that they, 
+she and the stranger, block the aisle.
+And, as it happens, the second passenger’s thoughts mirror the first’s.</div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><p class="em-above">1. The sisters perform an intentional joint action; the strangers’ actions are parallel but merely individual.</p></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><p class="em-above">2. In both cases, the conditions of the Simple Theory are met.</p><div class="notes">The feature under consideration as distinctive of joint action is present: 
+each passenger is acting on her intention that they, the two passengers, block the aisle.
+</div></div><div class="slide"><p class="em-above">therefore:</p><p class="em-above">3. The Simple Theory does not correctly answer the question, What distinguishes joint actions from parallel but merely individual actions? </p></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-removeclass" data-what="#timer1 .timer" data-cls="running"></div><div class="notes">Is it really a counterexample?</div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer.hide" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what="#timer1 .timer" data-cls="running"></div></div></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/unit_001/Slide05.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">Recall our earlier contrast cases ...</div></div></div></div></section><section class="slide"><img class="bkg" src="/img/unit_001/slide09.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/unit_001/slide10.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="question hide"><p class="huge-glow">Question</p><p class="under-huge-glow" style="margin-top:-3em;">What distinguishes joint actions from parallel but merely individual actions?</p></div><p class="center line-through">The Simple Theory</p><div class="notes">I’ve been arguing that the Simple Theory is either outright wrong or else radically incomplete
+as an account of shared agency.</div><div class="notes">Apparently, it is possible for two or more agents to each intend that 
+they do one thing together and to act on these intentions without them thereby 
+exercising shared agency a strong-ish sense.</div><div class="slide"><div class="dv dv-velocity" data-what=".question" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">So the Simple Theory fails to provide a satisfying answer to the question, What distinguishes 
+genuine joint actions from parallel but merely individual actions?</div><div class="notes">Let me pause to say why this matters and how it fits into the big picture ...</div><div class="notes">Philosophers have offered a tremendous variety of incompatible, wildly complicated and
+conceptually innovative theories about shared agency. 
+The Simple Theory is an obstacle to discussing these theories.
+If the Simple Theory is correct, none of the complexity philosophers have offered is needed.</div><div class="notes">The first problem I encounter in thinking about shared agency is that philosophers
+seem to take for granted without argument that the Simple Theory can be excluded.
+In fact it is surprisingly difficult to show that the Simple Theory is wrong.
+The usual argument against it is that it is circular, but we saw that this argument 
+depends on the mistaken assumption that all cases of acting together involve joint action. </div><div class="notes">A better objection to the Simple Theory involves counterexamples.
+But we saw that the standard counterexample, Bratman’s mafia cases, does not work.
+However refining that counterexample does appear to present a problem for the 
+Simple Theory.</div><div class="notes">Note that I don’t claim that the objection to the Simple Theory is decisive;
+in fact one of my aims (but not in these lectures) is to show that it is possible to
+save the Simple Theory.
+Nevertheless I do think that the objections to it are serious enough that we
+must now explore what proper philosophers have to say about shared agency. </div></div><div class="slide"><p class="hem-around center one">Joint actions are actions with two or more agents ✘ </p></div><div class="slide"><div class="dv dv-style" data-what=".one" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div><p class="hem-around center two">Joint actions are events with two or more agents ✘ </p></div><div class="slide"><div class="dv dv-style" data-what=".two" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div></div></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="one"><p>short essay question:</p><p class="indent">Why, if at all, do we need a theory of <span class="shared-intention">shared intention</span><span>?</span></p><p class="em-above">(Will be a while before this question makes sense.)</p></div><div class="two"><p class="em-above">plan d’attaque</p><p class="indent premise">premise: Shared intention can only be understood as the solution to a problem.</p><p class="indent p1">1. What is the Problem of Joint Action? <span class="tick">✓</span></p><p class="indent p2">2. Can we solve the Problem without shared intention? <span class="tick hide">✓</span></p><p class="indent p3">3. If we do need shared intention, what is the best account available? <span class="tick hide">✓</span></p></div><div class="dv dv-addclass" data-what=".p2" data-cls="bkg-orange-row "></div><div class="dv dv-velocity" data-what=".one" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:0}"></div><div class="slide"><div class="dv dv-removeclass" data-what=".p2" data-cls="bkg-orange-row "></div><div class="dv dv-velocity" data-what=".p2 .tick" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-addclass" data-what=".p2" data-cls="bkg-limegreen-row "></div></div><div class="slide"><div class="dv dv-removeclass" data-what=".p2" data-cls="bkg-limegreen-row "></div><div class="dv dv-addclass" data-what=".p3" data-cls="bkg-grey-row "></div><div class="notes">But before we get there I want to cover a question from last week
+
+</div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="hem-around">Cecilia1234-dot </p><p class="hem-around">Question about Davidson's I chapter: Agent, Reasons and Causes, in R.
+Binkley, R. Bronaugh, & A. Marras (Eds.)</p><p class="hem-around">May we have a clearer explanation of what "primary reason" means and the
+relevant necessary condition stated by Davidson?
+</p></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div style="width:600px;"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794.6 567.2" width="600" height="428.3">
+<defs>
+    <style>
+          @font-face {
+            font-family: "Virgil";
+            src: url("/fonts/Virgil.woff2");
+          }
+    </style>      
+</defs>
+<rect x="0" y="0" width="794.5816479912035" height="567.2228273909598" fill="#000000"></rect>
+<g class='desire hide'>
+  <g stroke-linecap="round" transform="translate(31.076384574928113 83.19670434408482) rotate(0 150.3831787109375 79.74659729003906)">
+      <path d="M32 0 M32 0 C120.77 -0.82, 207.8 -0.12, 268.77 0 M32 0 C97.62 -0.21, 162.22 0.94, 268.77 0 M268.77 0 C289.98 1.27, 299.36 11.74, 300.77 32 M268.77 0 C291.01 2.16, 302.88 9.41, 300.77 32 M300.77 32 C300.79 67.83, 302.74 101.59, 300.77 127.49 M300.77 32 C301.38 60.79, 302.11 88.35, 300.77 127.49 M300.77 127.49 C300.54 150.36, 291.56 158.8, 268.77 159.49 M300.77 127.49 C299.44 150.45, 290.93 160.21, 268.77 159.49 M268.77 159.49 C219.78 158.25, 170.11 158.35, 32 159.49 M268.77 159.49 C191.31 159.94, 115.28 161.16, 32 159.49 M32 159.49 C11.59 159.72, 0.91 149.32, 0 127.49 M32 159.49 C9.08 159.04, -1.99 151.01, 0 127.49 M0 127.49 C-1.29 96.85, 1.58 64.31, 0 32 M0 127.49 C0.94 98.78, 0.07 69.66, 0 32 M0 32 C1.53 11.1, 11.75 0.78, 32 0 M0 32 C0.19 10.3, 11.21 -1.12, 32 0" stroke="#ffffff" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(51.38815215305311 112.45805688314732) rotate(0 135.61512756347656 52.12326049804676)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">desire: prevent you </text>
+      <text x="0" y="34.748840332031165" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">walking into the </text>
+      <text x="0" y="69.49768066406233" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">path of a bus</text>
+  </g>
+</g>
+<g class='belief hide'>
+  <g stroke-linecap="round" transform="translate(407.6736746139906 85.52109094076451) rotate(1.227236596416939 150.3831787109375 79.74659729003906)">
+      <path d="M32 0 M32 0 C86.02 -1.44, 140.26 -1.12, 268.77 0 M32 0 C112.74 -0.27, 195.55 -0.87, 268.77 0 M268.77 0 C289.22 0.38, 302.19 9.71, 300.77 32 M268.77 0 C290.11 -1.91, 301.9 11.89, 300.77 32 M300.77 32 C302.49 58.07, 301.45 81.88, 300.77 127.49 M300.77 32 C301.13 67.47, 300.29 101.78, 300.77 127.49 M300.77 127.49 C302.7 150.6, 290.57 158.55, 268.77 159.49 M300.77 127.49 C298.74 149.95, 288.84 161.54, 268.77 159.49 M268.77 159.49 C188.41 157.94, 107.59 158.51, 32 159.49 M268.77 159.49 C202.28 160.88, 136.48 160.03, 32 159.49 M32 159.49 C10.09 159.55, -1.41 148.03, 0 127.49 M32 159.49 C9.67 158.15, 0.31 147.22, 0 127.49 M0 127.49 C-1.37 91.52, -1.94 53.24, 0 32 M0 127.49 C-0.48 101.09, 0.27 72.83, 0 32 M0 32 C1.31 9.41, 9.24 -1.05, 32 0 M0 32 C0.61 12.13, 10.65 0.96, 32 0" stroke="#ffffff" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(427.9512649761837 114.69754133552857) rotate(1.227236596416939 126.12483978271484 52.12326049804676)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">belief: shouting will</text>
+      <text x="0" y="34.748840332031165" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">make you change</text>
+      <text x="0" y="69.49768066406233" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">course</text>
+  </g>
+</g>
+<g class='action hide'>
+  <g transform="translate(322.9636373825453 408.2590517561943) rotate(0 61.902198791503906 34.74884033203119)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">action: </text>
+      <text x="0" y="34.748840332031165" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">‘Actung!’</text>
+  </g>
+  <g stroke-linecap="round" transform="translate(261.9257498093031 325.2395510237723) rotate(0 115.99163818359375 115.99163818359375)">
+      <path d="M85.75 4.79 C97.4 -0.03, 113.2 0.37, 126.65 1.32 C140.11 2.26, 154.39 4.83, 166.48 10.45 C178.56 16.07, 190.16 25.48, 199.18 35.04 C208.21 44.59, 215.15 55.87, 220.61 67.77 C226.08 79.68, 230.88 93.51, 231.97 106.49 C233.06 119.47, 230.82 132.75, 227.14 145.67 C223.45 158.58, 217.26 172.94, 209.84 183.98 C202.42 195.02, 193.33 204.7, 182.59 211.91 C171.86 219.12, 158.44 224.14, 145.43 227.24 C132.42 230.34, 117.66 231.67, 104.53 230.5 C91.39 229.32, 78.46 225.63, 66.61 220.18 C54.76 214.73, 42.84 207.04, 33.43 197.8 C24.03 188.57, 15.75 176.9, 10.18 164.77 C4.6 152.63, 0.9 138.21, -0.03 124.99 C-0.97 111.77, 1.03 98.17, 4.57 85.44 C8.11 72.7, 13.7 59.35, 21.22 48.57 C28.73 37.79, 38.02 28.2, 49.67 20.73 C61.32 13.26, 83.58 6.56, 91.14 3.75 C98.69 0.94, 94.86 2.31, 95.01 3.88 M64.01 10.95 C74.28 3.96, 90.03 2.65, 103.52 1.5 C117 0.35, 131.94 1.2, 144.93 4.05 C157.92 6.91, 170.82 11.5, 181.45 18.64 C192.09 25.78, 201.17 35.87, 208.73 46.9 C216.3 57.92, 223.26 71.85, 226.86 84.79 C230.45 97.73, 231.16 111.56, 230.29 124.52 C229.43 137.49, 227 150.7, 221.65 162.58 C216.31 174.45, 207.12 186.14, 198.25 195.77 C189.38 205.4, 180.01 214.49, 168.44 220.35 C156.86 226.21, 142.01 229.6, 128.82 230.95 C115.62 232.31, 101.92 231.52, 89.25 228.48 C76.57 225.45, 63.89 220.17, 52.78 212.74 C41.66 205.31, 30.39 194.9, 22.57 183.91 C14.75 172.92, 9.61 159.29, 5.85 146.8 C2.09 134.31, -0.48 121.82, 0.02 108.96 C0.51 96.1, 3.52 81.84, 8.84 69.63 C14.17 57.42, 22.35 45.54, 31.95 35.69 C41.54 25.84, 60.92 14.08, 66.42 10.54 C71.92 6.99, 64.28 12.32, 64.95 14.42" stroke="#ffffff" stroke-width="1" fill="none"></path>
+  </g>
+</g>
+<g class='desire-arrow hide'>
+  <g stroke-linecap="round">
+      <g transform="translate(167.6590261764906 244.82078881674107) rotate(0 56.56925204333382 61.463865212905205)">
+          <path d="M0.41 -0.45 C19.49 20.5, 95.32 103.91, 113.98 124.66 M-0.84 -1.73 C18.23 18.95, 94.88 101.63, 113.56 122.8" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(167.6590261764906 244.82078881674107) rotate(0 56.56925204333382 61.463865212905205)">
+          <path d="M86.27 110.52 C94.5 111.26, 100.23 115.44, 113.15 121.78 M87.72 109.39 C94.86 112.58, 103.89 118.17, 113.37 123.55" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(167.6590261764906 244.82078881674107) rotate(0 56.56925204333382 61.463865212905205)">
+          <path d="M101.46 96.73 C105.7 101.03, 107.55 108.73, 113.15 121.78 M102.92 95.6 C105.12 103.27, 109.29 113.28, 113.37 123.55" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+  </g>
+</g>
+<g class='belief-arrow hide'>
+  <g stroke-linecap="round">
+      <g transform="translate(564.8518907812293 246.23996447092833) rotate(0 -49.45586264166968 55.60110907227636)">
+          <path d="M0.77 0.53 C-15.97 18.9, -82.52 91.74, -99.26 109.91 M-0.28 -0.24 C-17.19 18.37, -83.05 92.96, -99.68 111.45" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(564.8518907812293 246.23996447092833) rotate(0 -49.45586264166968 55.60110907227636)">
+          <path d="M-87.72 85.23 C-93.09 95.76, -98.12 107.54, -101.42 111.85 M-87.84 84.28 C-91.53 89.62, -93.73 97.15, -100.64 111.88" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(564.8518907812293 246.23996447092833) rotate(0 -49.45586264166968 55.60110907227636)">
+          <path d="M-72.4 98.87 C-83.8 104.08, -94.93 110.44, -101.42 111.85 M-72.51 97.92 C-79.92 100.01, -85.71 104.35, -100.64 111.88" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+  </g>
+</g>
+<g class='primary-reason hide'>
+  <g stroke-linecap="round" transform="translate(11.06468874169542 36.92858477878019) rotate(359.4776312866073 386.22613525390625 118.54216238275396)">
+      <path d="M32 0 M32 0 C303.98 -0.32, 576.98 0.95, 740.45 0 M740.45 0 C762.75 1.9, 773.09 8.97, 772.45 32 M772.45 32 C769.58 72.93, 770.91 115.74, 772.45 205.08 M772.45 205.08 C773.25 227.82, 762.6 235.43, 740.45 237.08 M740.45 237.08 C496.96 235.63, 253.78 236.09, 32 237.08 M32 237.08 C10.56 235.64, 0.39 227.56, 0 205.08 M0 205.08 C-0.02 148.39, -0.47 90.87, 0 32 M0 32 C-1.49 10.92, 9.27 -1.93, 32 0" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+  </g>
+  <g stroke-linecap="round" transform="translate(33.42568850722944 11.105638808319213) rotate(359.4776312866073 121.3753662109375 22.416351318359375)">
+      <path d="M13.08 -1.39 L237.91 0.39 L241.48 4.84 L240.99 40.4 L241.79 42.78 L230.22 45.38 L4.98 43.06 L0.46 38.43 L-1.49 10.95 L3.05 3.9 L12.14 -1.13" stroke="none" stroke-width="0" fill="#ffffff"></path>
+      <path d="M11.21 0 M11.21 0 C91.75 -1.53, 169.49 -1.51, 231.54 0 M231.54 0 C238.73 0.01, 241.22 4.19, 242.75 11.21 M242.75 11.21 C243.61 18.78, 243.33 30.42, 242.75 33.62 M242.75 33.62 C241.72 40.67, 240.34 43.47, 231.54 44.83 M231.54 44.83 C166.7 45.35, 98.89 43.52, 11.21 44.83 M11.21 44.83 C3.44 45.39, 1.47 39.42, 0 33.62 M0 33.62 C-0.52 27.09, -0.56 21.59, 0 11.21 M0 11.21 C0.51 3.91, 3.94 0.54, 11.21 0" stroke="transparent" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+  </g>
+  <g transform="translate(59.24833844255306 12.83640138788013) rotate(359.4776312866073 98.68595123291016 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#000000" text-anchor="start" style="white-space: pre; text-shadow: none;" direction="ltr" dominant-baseline="text-before-edge">primary reason</text>
+  </g>
+</g>
+</svg>
+
+
+</div><div class="dv dv-velocity" data-what=".action" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="notes">I shout ‘Actung!’
+You wonder why.
+And in wondering why you are seeking a rationalizing explanation:
+one which makes sense of the action from my point of view.</div><div class="slide"><div class="dv dv-velocity" data-what=".desire" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".desire-arrow" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".belief" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".belief-arrow" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".primary-reason" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="step1 hide"><span>‘Giving the reason why an agent did something is often a matter of naming the </span><span class="pro-attitude">pro attitude<span> </span><span class="desire hide">[ie. desire]</span></span><span> (a) or the related belief (b) or both; </span><span class="step2 hide"><span>let me call this pair the </span><span class="primary-reason">primary reason</span><span> why the agent performed the action. </span></span></p><p><span class="step3 hide">Now it is possible both to reformulate the claim that </span><span class="thesis">rationalizations are causal explanations</span><span class="step3 hide">  and to give structure to the argument by stating two theses about primary reasons:’</span></p><div class="notes">We are concerned with the thesis that 
+rationalizations are causal explanations.
+Davidson is attempting to make the thesis clearer by introducing some terminology.</div><div class="notes">primary reason</div><div class="notes">(‘Giving the reason why an agent did 
+something is often a matter of naming the 
+pro attitude [ie. desire] (a) or the related belief (b) or both; 
+let me call this pair the primary reason why the agent performed the action’
+<span class='grey-text'>(Davidson, 1980, p. 4)</span>.)
+</div><div class="slide"><div class="dv dv-velocity" data-what=".step1" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".step2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-addclass" data-what=".primary-reason" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".primary-reason" data-cls="bkg-invert"></div></div><div class="slide"><div class="dv dv-addclass" data-what=".pro-attitude" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".pro-attitude" data-cls="bkg-pink"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".desire" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><div class="dv dv-removeclass" data-what=".pro-attitude" data-cls="bkg-pink"></div><div class="dv dv-removeclass" data-what=".primary-reason" data-cls="bkg-invert"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".step3" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><p class="indent">1. In order to understand how a reason of any kind rationalizes an action it is necessary and sufficient that we see, at least in essential outline, how to construct a primary reason.</p><p class="indent">2. The primary reason for an action is its cause. </p><p>I shall argue for these points in turn.</p></div><p class="right"><span class='grey-text'>(Davidson, 1980, p. 4)</span></p><div class="notes">This is Actions, Reasons and Causes
+</div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div style="width:600px;"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794.6 567.2" width="600" height="428.3">
+<defs>
+    <style>
+          @font-face {
+            font-family: "Virgil";
+            src: url("/fonts/Virgil.woff2");
+          }
+    </style>      
+</defs>
+<rect x="0" y="0" width="794.5816479912035" height="567.2228273909598" fill="#000000"></rect>
+<g class='desire hide'>
+  <g stroke-linecap="round" transform="translate(31.076384574928113 83.19670434408482) rotate(0 150.3831787109375 79.74659729003906)">
+      <path d="M32 0 M32 0 C120.77 -0.82, 207.8 -0.12, 268.77 0 M32 0 C97.62 -0.21, 162.22 0.94, 268.77 0 M268.77 0 C289.98 1.27, 299.36 11.74, 300.77 32 M268.77 0 C291.01 2.16, 302.88 9.41, 300.77 32 M300.77 32 C300.79 67.83, 302.74 101.59, 300.77 127.49 M300.77 32 C301.38 60.79, 302.11 88.35, 300.77 127.49 M300.77 127.49 C300.54 150.36, 291.56 158.8, 268.77 159.49 M300.77 127.49 C299.44 150.45, 290.93 160.21, 268.77 159.49 M268.77 159.49 C219.78 158.25, 170.11 158.35, 32 159.49 M268.77 159.49 C191.31 159.94, 115.28 161.16, 32 159.49 M32 159.49 C11.59 159.72, 0.91 149.32, 0 127.49 M32 159.49 C9.08 159.04, -1.99 151.01, 0 127.49 M0 127.49 C-1.29 96.85, 1.58 64.31, 0 32 M0 127.49 C0.94 98.78, 0.07 69.66, 0 32 M0 32 C1.53 11.1, 11.75 0.78, 32 0 M0 32 C0.19 10.3, 11.21 -1.12, 32 0" stroke="#ffffff" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(51.38815215305311 112.45805688314732) rotate(0 135.61512756347656 52.12326049804676)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">desire: prevent you </text>
+      <text x="0" y="34.748840332031165" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">walking into the </text>
+      <text x="0" y="69.49768066406233" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">path of a bus</text>
+  </g>
+</g>
+<g class='belief hide'>
+  <g stroke-linecap="round" transform="translate(407.6736746139906 85.52109094076451) rotate(1.227236596416939 150.3831787109375 79.74659729003906)">
+      <path d="M32 0 M32 0 C86.02 -1.44, 140.26 -1.12, 268.77 0 M32 0 C112.74 -0.27, 195.55 -0.87, 268.77 0 M268.77 0 C289.22 0.38, 302.19 9.71, 300.77 32 M268.77 0 C290.11 -1.91, 301.9 11.89, 300.77 32 M300.77 32 C302.49 58.07, 301.45 81.88, 300.77 127.49 M300.77 32 C301.13 67.47, 300.29 101.78, 300.77 127.49 M300.77 127.49 C302.7 150.6, 290.57 158.55, 268.77 159.49 M300.77 127.49 C298.74 149.95, 288.84 161.54, 268.77 159.49 M268.77 159.49 C188.41 157.94, 107.59 158.51, 32 159.49 M268.77 159.49 C202.28 160.88, 136.48 160.03, 32 159.49 M32 159.49 C10.09 159.55, -1.41 148.03, 0 127.49 M32 159.49 C9.67 158.15, 0.31 147.22, 0 127.49 M0 127.49 C-1.37 91.52, -1.94 53.24, 0 32 M0 127.49 C-0.48 101.09, 0.27 72.83, 0 32 M0 32 C1.31 9.41, 9.24 -1.05, 32 0 M0 32 C0.61 12.13, 10.65 0.96, 32 0" stroke="#ffffff" stroke-width="1" fill="none"></path>
+  </g>
+  <g transform="translate(427.9512649761837 114.69754133552857) rotate(1.227236596416939 126.12483978271484 52.12326049804676)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">belief: shouting will</text>
+      <text x="0" y="34.748840332031165" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">make you change</text>
+      <text x="0" y="69.49768066406233" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">course</text>
+  </g>
+</g>
+<g class='action hide'>
+  <g transform="translate(322.9636373825453 408.2590517561943) rotate(0 61.902198791503906 34.74884033203119)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">action: </text>
+      <text x="0" y="34.748840332031165" font-family="Virgil, Segoe UI Emoji" font-size="27.79907226562493px" fill="#ffffff" text-anchor="start" style="white-space: pre;" direction="ltr" dominant-baseline="text-before-edge">‘Actung!’</text>
+  </g>
+  <g stroke-linecap="round" transform="translate(261.9257498093031 325.2395510237723) rotate(0 115.99163818359375 115.99163818359375)">
+      <path d="M85.75 4.79 C97.4 -0.03, 113.2 0.37, 126.65 1.32 C140.11 2.26, 154.39 4.83, 166.48 10.45 C178.56 16.07, 190.16 25.48, 199.18 35.04 C208.21 44.59, 215.15 55.87, 220.61 67.77 C226.08 79.68, 230.88 93.51, 231.97 106.49 C233.06 119.47, 230.82 132.75, 227.14 145.67 C223.45 158.58, 217.26 172.94, 209.84 183.98 C202.42 195.02, 193.33 204.7, 182.59 211.91 C171.86 219.12, 158.44 224.14, 145.43 227.24 C132.42 230.34, 117.66 231.67, 104.53 230.5 C91.39 229.32, 78.46 225.63, 66.61 220.18 C54.76 214.73, 42.84 207.04, 33.43 197.8 C24.03 188.57, 15.75 176.9, 10.18 164.77 C4.6 152.63, 0.9 138.21, -0.03 124.99 C-0.97 111.77, 1.03 98.17, 4.57 85.44 C8.11 72.7, 13.7 59.35, 21.22 48.57 C28.73 37.79, 38.02 28.2, 49.67 20.73 C61.32 13.26, 83.58 6.56, 91.14 3.75 C98.69 0.94, 94.86 2.31, 95.01 3.88 M64.01 10.95 C74.28 3.96, 90.03 2.65, 103.52 1.5 C117 0.35, 131.94 1.2, 144.93 4.05 C157.92 6.91, 170.82 11.5, 181.45 18.64 C192.09 25.78, 201.17 35.87, 208.73 46.9 C216.3 57.92, 223.26 71.85, 226.86 84.79 C230.45 97.73, 231.16 111.56, 230.29 124.52 C229.43 137.49, 227 150.7, 221.65 162.58 C216.31 174.45, 207.12 186.14, 198.25 195.77 C189.38 205.4, 180.01 214.49, 168.44 220.35 C156.86 226.21, 142.01 229.6, 128.82 230.95 C115.62 232.31, 101.92 231.52, 89.25 228.48 C76.57 225.45, 63.89 220.17, 52.78 212.74 C41.66 205.31, 30.39 194.9, 22.57 183.91 C14.75 172.92, 9.61 159.29, 5.85 146.8 C2.09 134.31, -0.48 121.82, 0.02 108.96 C0.51 96.1, 3.52 81.84, 8.84 69.63 C14.17 57.42, 22.35 45.54, 31.95 35.69 C41.54 25.84, 60.92 14.08, 66.42 10.54 C71.92 6.99, 64.28 12.32, 64.95 14.42" stroke="#ffffff" stroke-width="1" fill="none"></path>
+  </g>
+</g>
+<g class='desire-arrow hide'>
+  <g stroke-linecap="round">
+      <g transform="translate(167.6590261764906 244.82078881674107) rotate(0 56.56925204333382 61.463865212905205)">
+          <path d="M0.41 -0.45 C19.49 20.5, 95.32 103.91, 113.98 124.66 M-0.84 -1.73 C18.23 18.95, 94.88 101.63, 113.56 122.8" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(167.6590261764906 244.82078881674107) rotate(0 56.56925204333382 61.463865212905205)">
+          <path d="M86.27 110.52 C94.5 111.26, 100.23 115.44, 113.15 121.78 M87.72 109.39 C94.86 112.58, 103.89 118.17, 113.37 123.55" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(167.6590261764906 244.82078881674107) rotate(0 56.56925204333382 61.463865212905205)">
+          <path d="M101.46 96.73 C105.7 101.03, 107.55 108.73, 113.15 121.78 M102.92 95.6 C105.12 103.27, 109.29 113.28, 113.37 123.55" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+  </g>
+</g>
+<g class='belief-arrow hide'>
+  <g stroke-linecap="round">
+      <g transform="translate(564.8518907812293 246.23996447092833) rotate(0 -49.45586264166968 55.60110907227636)">
+          <path d="M0.77 0.53 C-15.97 18.9, -82.52 91.74, -99.26 109.91 M-0.28 -0.24 C-17.19 18.37, -83.05 92.96, -99.68 111.45" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(564.8518907812293 246.23996447092833) rotate(0 -49.45586264166968 55.60110907227636)">
+          <path d="M-87.72 85.23 C-93.09 95.76, -98.12 107.54, -101.42 111.85 M-87.84 84.28 C-91.53 89.62, -93.73 97.15, -100.64 111.88" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(564.8518907812293 246.23996447092833) rotate(0 -49.45586264166968 55.60110907227636)">
+          <path d="M-72.4 98.87 C-83.8 104.08, -94.93 110.44, -101.42 111.85 M-72.51 97.92 C-79.92 100.01, -85.71 104.35, -100.64 111.88" stroke="#ffffff" stroke-width="1" fill="none"></path>
+      </g>
+  </g>
+</g>
+<g class='primary-reason hide'>
+  <g stroke-linecap="round" transform="translate(11.06468874169542 36.92858477878019) rotate(359.4776312866073 386.22613525390625 118.54216238275396)">
+      <path d="M32 0 M32 0 C303.98 -0.32, 576.98 0.95, 740.45 0 M740.45 0 C762.75 1.9, 773.09 8.97, 772.45 32 M772.45 32 C769.58 72.93, 770.91 115.74, 772.45 205.08 M772.45 205.08 C773.25 227.82, 762.6 235.43, 740.45 237.08 M740.45 237.08 C496.96 235.63, 253.78 236.09, 32 237.08 M32 237.08 C10.56 235.64, 0.39 227.56, 0 205.08 M0 205.08 C-0.02 148.39, -0.47 90.87, 0 32 M0 32 C-1.49 10.92, 9.27 -1.93, 32 0" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+  </g>
+  <g stroke-linecap="round" transform="translate(33.42568850722944 11.105638808319213) rotate(359.4776312866073 121.3753662109375 22.416351318359375)">
+      <path d="M13.08 -1.39 L237.91 0.39 L241.48 4.84 L240.99 40.4 L241.79 42.78 L230.22 45.38 L4.98 43.06 L0.46 38.43 L-1.49 10.95 L3.05 3.9 L12.14 -1.13" stroke="none" stroke-width="0" fill="#ffffff"></path>
+      <path d="M11.21 0 M11.21 0 C91.75 -1.53, 169.49 -1.51, 231.54 0 M231.54 0 C238.73 0.01, 241.22 4.19, 242.75 11.21 M242.75 11.21 C243.61 18.78, 243.33 30.42, 242.75 33.62 M242.75 33.62 C241.72 40.67, 240.34 43.47, 231.54 44.83 M231.54 44.83 C166.7 45.35, 98.89 43.52, 11.21 44.83 M11.21 44.83 C3.44 45.39, 1.47 39.42, 0 33.62 M0 33.62 C-0.52 27.09, -0.56 21.59, 0 11.21 M0 11.21 C0.51 3.91, 3.94 0.54, 11.21 0" stroke="transparent" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7"></path>
+  </g>
+  <g transform="translate(59.24833844255306 12.83640138788013) rotate(359.4776312866073 98.68595123291016 17.5)">
+      <text x="0" y="0" font-family="Virgil, Segoe UI Emoji" font-size="28px" fill="#000000" text-anchor="start" style="white-space: pre; text-shadow: none;" direction="ltr" dominant-baseline="text-before-edge">primary reason</text>
+  </g>
+</g>
+</svg>
+
+
+</div><div class="dv dv-velocity" data-what=".hide" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="one"><p>short essay question:</p><p class="indent">Why, if at all, do we need a theory of <span class="shared-intention">shared intention</span><span>?</span></p><p class="em-above">(Will be a while before this question makes sense.)</p></div><div class="two"><p class="em-above">plan d’attaque</p><p class="indent premise">premise: Shared intention can only be understood as the solution to a problem.</p><p class="indent p1">1. What is the Problem of Joint Action? <span class="tick">✓</span></p><p class="indent p2">2. Can we solve the Problem without shared intention? <span class="tick hide">✓</span></p><p class="indent p3">3. If we do need shared intention, what is the best account available? <span class="tick hide">✓</span></p></div><div class="dv dv-velocity" data-what=".one" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-velocity" data-what=".p2 .tick" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what=".p3" data-cls="bkg-grey-row "></div></div></div></div></section></div></body></html>

@@ -1,0 +1,177 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Motor Representations Aren’t Intentions</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="motor_representations_arent_intentions"><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Motor Representations Aren’t Intentions</h2></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide25.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">As background we first need a generic distinction between content and format. 
+Imagine you are in an unfamiliar city and are trying to get to the central station. 
+A stranger offers you two routes. Each route could be represented by a distinct line 
+on a paper map. The difference between the two lines is a difference in content. 
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide26.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Each of the routes could alternatively have been represented by a distinct series 
+of instructions written on the same piece of paper; these cartographic and 
+propositional representations differ in format. The format of a representation 
+constrains its possible contents. For example, a representation with a cartographic 
+format cannot represent what is represented by sentences such as `There could not be a 
+mountain whose summit is inaccessible.'\footnote{ Note that the distinction between 
+content and format is orthogonal to issues about representational medium. The maps in 
+our illustration may be paper map or electronic maps, and the instructions may be spoken, 
+signed or written. This difference is one of medium.} The distinction between content and 
+format is necessary because, as our illustration shows, each can be varied independently 
+of the other.
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide27.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Format matters because only where two representations have the same format can they be straightforwardly inferentially integrated.</div><div class="notes">To illustrate, let’s stay with representations of routes. 
+Suppose you are given some verbal instructions describing a route. You are then shown a representation of a route on a map and asked whether this is the same route that was verbally described. You are not allowed to find out by following the routes or by imagining following them. 
+Special cases aside, answering the question will involve a process of translation because two distinct representational formats are involved, propositional and cartographic. It is not be enough that you could follow either representation of the route. You will also need to be able to translate from at least one representational format into at least one other format. 
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide28.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">How in general can we identify or distinguish representational formats? Because representational formats are typically associated with characteristic performance profiles, it is sometimes possible to infer similarities and differences in representational format from similarities and differences in the processes in which representations feature. </div><div class="notes">To illustrate, suppose that you have a route representation and I want to work out whether it this representation has a cartographic or propositional format.  One way to do this might be to test your performance on different tasks.  If the representation is propositional you are likely to be relatively fast at identifying key landmarks but relatively slow at translating the route into a sequence of compass directions; but the converse will be true if your representation is cartographic.
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide29.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">The same principle---distinguishing and identifying formats by measuring characteristic processing
+profile---works for mental representations too.</div><div class="notes">To illustrate, compare imagining seeing an object moving with actually seeing it move. 
+For this comparison we need to distinguish two ways of imagining seeing. There is a way of 
+imagining seeing which phenomenologically is something like seeing except that it does not 
+necessarily involve being receptive to stimuli. This way of imagining seeing, sometimes 
+called `sensory imagining', is commonly distinguished from cognitive ways of imagining 
+seeing which might for example involve thinking about seeing.
+It is this way of imagining seeing an object move that we wish to compare with actually 
+seeing an object move. 
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide30.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="handout">Imagining seeing an object move and actually seeing an object move have similarities in
+characteristic performance profile
+(<span class='grey-text'>Kosslyn, 1978</span>; <span class='grey-text'>Kosslyn, 1996, p. \ 99ff</span>; <span class='grey-text'>S.M. Kosslyn, Ball, &#38; Reiser, 1978</span>)</div><div class="notes">Imagining seeing an object move and actually seeing an object move have similarities in
+characteristic performance profile. For instance, whether an object can be seen all at once depends
+on its size and distance from the perceiver; strikingly, when subjects imagine seeing an object,
+whether they can imagine seeing it all at once depends in the same way on size and distance
+(<span class='grey-text'>Stephen Michael Kosslyn, 1978</span>; <span class='grey-text'>Stephen Michael Kosslyn, 1996, p. \ 99ff</span>).</div><div class="notes">Also, how long it takes to imagine looking over an object depends on the object's subjective size in
+the same way that how long it would take to actually look over that object would depend on its
+subjective size <span class='grey-text'>(S.M. Kosslyn et al., 1978)</span>.</div><div class="notes">The similarities in characteristic performance profile and the particular patterns of interference
+are good (if non-decisive) reasons to conjecture that imagining seeing and actually seeing involve
+representations with a common format.
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide31.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="handout">The way imagining performing an action unfolds in time is 
+similar in some respects to the way actually performing an action of the same type would unfold
+(<span class='grey-text'>Decety, Jeannerod, &#38; Prablanc, 1989</span>; <span class='grey-text'>Decety, 1996</span>; <span class='grey-text'>Jeannerod, 1994</span>; <span class='grey-text'>Parsons, 1994</span>; <span class='grey-text'>Frak, Paulignan, &#38; Jeannerod, 2001</span>)</div><div class="notes">One way of imagining action is phenomenologically something like acting except 
+that such imaginings are not necessarily responsive to the features of actual 
+objects and do not necessarily result in bodily movements. </div><div class="notes">There is evidence that the way imagining performing an action unfolds in time is 
+similar in some respects to the way actually performing an action of the same type would unfold. </div><div class="notes">For instance, how long it takes to imagine moving an object is closely related to 
+how long it would take to actually move that object (<span class='grey-text'>Decety et al., 1989</span>; <span class='grey-text'>Decety, 1996</span>; <span class='grey-text'>Jeannerod, 1994</span>). </div><div class="notes">In addition, for actions such as grasping the handle of a cup, manipulating the 
+target object in ways that would make the action harder (such as orienting the cup's 
+handle to make it less convenient for you to grasp) make a corresponding difference to 
+the effort involved in imagining performing the action (<span class='grey-text'>Parsons, 1994</span>; <span class='grey-text'>Frak et al., 2001</span>).
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide32.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Contrast imagining rotating a ball with imagining seeing a ball rotate.</div><div class="notes">As is implied by what we’ve already said, these have quite different characteristic performance
+profiles.</div><div class="notes">How quickly the former can be done is a function of how long it would take the agent to rotate the
+ball, whereas how quickly the latter can be done depends on how rapidly the ball can rotate and
+still be perceived as rotating.</div><div class="notes">Further, in some cases rotating a ball clockwise is easier than rotating it anti-clockwise, and so
+is imagining a ball rotate. By contrast, the effort involved in actually seeing or imagining seeing
+a ball rotate does not similarly differ depending on direction.
+
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide33.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="handout">Judging the laterality of a hand vs of a letter. 
+For ordinary subjects, the tasks differ: they are less accurate 
+when the hand's position is biomechanically awkward. 
+But <span class='grey-text'>Fiori et al. (2013)</span> show that the tasks do not so differ for subjects suffering Amyotrophic
+Lateral Sclerosis (ALS), which impairs motor representation <span class='grey-text'>(Parsons, Gabrieli, Phelps, &#38; Gazzaniga, 1998)</span>.
+</div><div class="notes">It may be objected that performance differences such as these can be explained without appealing to
+a difference in format. After all, rotating a ball involves an action whereas a ball rotating does
+not; consequently, imagining the former may be thought to differ from imagining the latter with
+respect to the contents of the representations involved. Supposing that there are differences in
+content here and in other cases, could these fully explain differences in performance profile? To
+see why not, consider two tasks involving mental rotation. Judging the laterality of a rotated
+letter is thought to involve phenomenologically vision-like imagination
+<span class='grey-text'>(Jordan, Heinze, Lutz, Kanowski, &#38; Jäncke, 2001)</span>, whereas judging the laterality of a rotated hand is thought to involve
+phenomenologically action-like imagination (<span class='grey-text'>Parsons, 1987</span>; <span class='grey-text'>Gentilucci, Daprati, &#38; Gangitano, 1998</span>).
+Ordinary subjects who are asked to judge the laterality of a hand rotated to various degrees are
+less accurate when the hand's position is biomechanically awkward. By contrast, no such effect
+occurs for comparable tasks involving letters rather than hands. How could this difference in
+performance in imagining hands and letters be explained? Consider the claim that the difference in
+performance can be fully explained by a difference in the content of the representations involved.
+Initially this might seem plausible because one task involves hands whereas the other involves
+letters. However, there are subjects who can perform both tasks but whose performance is not
+different for hands and letters <span class='grey-text'>(Fiori et al., 2013)</span>. These are subjects suffering Amyotrophic
+Lateral Sclerosis (ALS), which impairs motor representation <span class='grey-text'>(Parsons et al., 1998)</span>. Since
+ALS and ordinary subjects encounter the same stimuli and perform the same tasks, there seems to be
+no reason (other than our hypothesis about a difference in format) to suppose that the two groups'
+performance involves representations with different contents. So if the hand-letter difference in
+performance were entirely explained by a difference in content, we would expect ALS and ordinary
+subjects to exhibit the same difference in performance. But this is not the case. This is an
+obstacle to supposing that the hand-letter difference in performance in ordinary subjects could be
+explained by appeal to content.</div><p class="source"><span class='grey-text'>Fiori et al. (2013)</span></p></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide34.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">So far we have been arguing that motor and visual representations differ in format. Why suppose that
+motor representations also differ in format from intentions? Contrast two ways of imagining taking a
+shot in basketball, one involving the phenomenologically action-like kind of imagination and the
+other involving a cognitive kind of imagination. The contrast we require is roughly between the way
+a former player might imagine this and the way that someone who has only ever read about basketball
+might imagine it. As we have seen, the way phenomenologically action-like imagination unfolds in
+time and the amount of effort it involves will depend on bio-mechanical, dynamical and postural
+constraints, among others. These constraints are closely related to those which govern actually
+performing such actions <span class='grey-text'>(Jeannerod, 2001)</span>, and some can be altered by acquiring or losing
+motor expertise. By contrast no such constraints would be expected always to apply where a cognitive
+kind of imagination is involved. In line with the general strategy of inferring differences in
+format from differences in characteristic performance profile, we conclude that motor
+representations differ in format from those involved in cognitive kinds of imagination, which are
+plausibly propositional.
+
+
+
+</div></div></div></div></div></section><section class="slide"><div class="right-half-white hide" style="z-index:-22;"></div><div class="container_12"><div class="notes handout">#. Only representations with a common format can be inferentially integrated.
+#. Any two intentions can be inferentially integrated in practical reasoning.
+#. My intention that I visit the ZiF is a propositional attitude.
+Therefore:
+#.  All intentions are propositional attitudes
+But:
+#. No motor representations are propositional attitudes.
+So:
+#. No motor representations are intentions.
+</div><div class="grid_6 words left-half"><div style="padding-right:1em;"></div></div><div class="grid_6 words invert right-half hide"><div style="padding-left:1em;"><div class="slide"><div class="dv dv-velocity" data-what=".right-half-white, .right-half" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><p>Only representations with a common format can be inferentially integrated.</p><p>Any two intentions can be inferentially integrated in practical reasoning.</p><p>My intention that I visit the ZiF is a propositional attitude.</p><div class="slide"><p class="em-above" style="margin-bottom:-1em;">Therefore:</p><div class="dv dv-velocity" data-what=".step2" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div></div></div></div><div class="clear"></div><div class="grid_6 words left-half"><div style="padding-right:1em;"><p>No motor representations are propositional attitudes.</p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="step2 hide">All intentions are propositional attitudes</p></div></div><div class="slide"><div class="clear"></div><div class="words run-across"><p class="center">No motor representations are intentions.</p></div><div class="container_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/intention_and_motor_representation/Slide04.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;10px&quot;}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:0}"></div><div class="txt"><p class="center">intention = motor representation?<span class="step2">  No!</span></p></div><div class="slide"><div class="dv dv-velocity" data-what=".txt" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div><div class="notes">So we are left with two different views about which things
+are actions, two worlds.
+</div></div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p>plan</p><p class="hem-around one">1. What is the relation between a very small scale instrumental action and the outcome or outcomes to which it is directed? <span class="tick hide">✓</span></p><p class="hem-around two">2. How, if at all, does answering this question challenge the Standard Answer to the Problem of Action? <span class="tick hide">✓</span></p><p class="hem-around three">3. Is there a parallel set of issues concerning joint action? <span class="tick hide">✓</span></p><div class="dv dv-addclass" data-what=".two" data-cls="bkg-grey-row "></div><div class="notes">Still working on this, not finished yet ...</div></div></div></div></div></section></div></body></html>

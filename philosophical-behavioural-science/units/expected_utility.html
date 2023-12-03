@@ -1,0 +1,111 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Expected Utility</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="expected_utility"><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Expected Utility</h2></div></div></section><div class="notes">in this lecture we're going  to explore how  some formal methods borrowed
+from  decision theory  might enhance our understanding of the  discoveries
+about action </div><div class="notes">we're also going to explore, conversely,
+how those discoveries might bear  on our use of these formal models.</div><div class="notes">Although this is going to seem quite dry  at the beginning, when i taught
+this  course in the past this was one of the  areas that most interested
+people. 
+So do bear with me.
+</div><section class="slide"><div class="right-half-white hide" style="z-index:-22;"></div><img class="bkg" src="/img/decision_theory/slide15.jpg" width="1024px" style="mix-blend-mode:hard-light; opacity:0.5"/><div class="container_12"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}"></div><div class="notes handout">Decision Theory is about how individuals decide which of several available actions to perform
+<span class='grey-text'>(Jeffrey, 1983, p. textbook:)</span>.</div><div class="notes">so I say ‘decision theory’ but
+sometimes people talk  about ‘rational choice theory’.
+Same thing.</div><div class="grid_6 words left-half"><div style="padding-right:1em;"><p>decision theory</p><div class="slide"><p class="em-above">How do rational agents decide which of several available actions to perform?</p></div><div class="notes">simple  question: How do rational agents decide  which of several available
+actions to  perform ? </div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="notes">what i want to do
+in this section is  just to introduce you to the kinds of  representation
+which are used 
+But it's important first of  all to talk a little
+bit about the  motivation the 
+people who study  decision theory ...</div></div></div></div></section><section class="slide"><img class="bkg" src="/img/von-neumann-morgenstern.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">This isn’t quite right: they are writing about game theory of course
+(but the idea is fine)</div><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;margin-top&quot;:&quot;-200px&quot;}"></div><div class="slide"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;filter&quot;:&quot;blur(3px) saturate(0.3) opacity(0.66)&quot;}"></div><div class="quote"><p class="em-above handout notes show">‘we wish to find the mathematically complete principles which 
+define “rational behavior” for the participants in a social economy, 
+and to derive from them the general characteristics of that behavior’ </p><div class="handout notes ctd"> <span class='grey-text'>(Neumann, Morgenstern, Rubinstein, &#38; Kuhn, 1953, p. 31)</span>.</div><p class="right grey-text">von Neumann & Morgenstern, 1953 p. 31</p></div><div class="notes">so here we have a super lofty  aim and of course one of our questions
+will be to what extent that is possible  and what assumptions they're
+relying on </div><div class="notes">Maybe not everyone who uses their mathematical principles shares the 
+founders’ ambitions.
+Wombles abound.
+</div></div></div></div></div></div></section><section class="slide"><div class="right-half-white" style="z-index:-22;"></div><div class="container_12"><div class="notes">so as i said we're going to start with  trying to understand how actions
+are  represented from the point of view of  somebody who wants to go on
+and  construct decision theory.
+what we're doing now is
+just a simple  background what does the representation  look like.
+let's
+be sure we understand it</div><div class="grid_6 words left-half"><div style="padding-right:1em;"><p>decision theory</p><div class="no-slide"><p class="em-above">How do rational agents decide which of several available actions to perform?</p></div></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p>game theory</p><div class="no-slide"><p class="em-above"> <span>When two or more agents interact,</span><br/><span class="step2">so that which outcome one agent’s choice brings about depends on how another chooses,</span><br/><span>how do their preferences guide their choices?</span></p></div></div></div><div class="dv dv-velocity" data-what=".right-half" data-css="{&quot;blur&quot;:&quot;2px&quot;}" data-options="{&quot;duration&quot;:500}"></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide1.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide2.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide3.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide4.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide5.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">Expected utilities can be derived from desirabilities and probabilities.
+One procedure for choosing an action is to compute expected utilities (in the way illustrated) and then perform the action with the highest expected utility.
+</div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="center">I don’t understand expected utility</p><div class="notes">I can illustrate it using gambling</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide8.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">First illustration is a simple bet.</div><div class="notes">Which gamble would you prefer?
+If you are like me, you are interested in the 
+expected gain ...</div></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide9.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide10.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide11.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide12.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide13.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide14.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide15.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">Second illustration is about which of two bets you should 
+select if you can only choose one.
+</div></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide16.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide17.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide18.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide19.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide20.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide21.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide22.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/expected_utility_gambling_illustration/slide23.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">OK so that was an illustration with money.</div><div class="notes">I used money to simplify the idea of expected utility.</div><div class="notes">But what we are really
+interested in is preferences.
+</div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p>expected utility <br/><span>is a bit like </span><br/><span>the value of a bet</span></p></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide5.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide11.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">This is because your preferences do not necessarily vary linearly
+with monetary amounts.  Once you have the first £100, the next
+£100 might not make nearly as much difference to you and so it might
+be rational to care a lot less about whether you have it.</div></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide5.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"></div></div></div></section><section class="slide"><img class="bkg" src="/img/decision_theory/slide5.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="layer1"><p>Terminology</p><p class="em-above">actions have outcomes</p><p class="indent slide">(Jeffrey: outcome = ‘consequence’)</p><div class="slide"><p class="hem-above">which outcome an action causes depends on **conditions**</p></div><div class="slide"><p class="hem-above">subjective probabilities attach to conditions.</p></div><div class="slide"><p class="hem-above">preferences rank outcomes</p></div><div class="slide"><p class="hem-above">expected utilities attach to actions.</p></div><p class="indent slide">(Jeffrey: expected utility = ‘estimated desirabilities’)</p><p class="right"><span class='grey-text'>Jeffrey (1983)</span></p><div class="notes">Make sure you understand the terminology and can relate it to the scenario.</div><div class="notes">Be sure to use the terminology consistently, and with precision, in your writing.</div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".layer1" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div></div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="dv dv-velocity" data-what=".layer1" data-css="{&quot;blur&quot;:0}" data-options="{&quot;duration&quot;:400}"></div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">It is important to understand that we haven’t done anything
+more than introduce a way of representing things.</div><p class="hem-around">so far: the representation</p><p class="hem-around">next step: the theory</p></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/von-neumann-morgenstern.jpg" width="1024px"/><div style="mix-blend-mode:difference"> <div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="timer-outer" id="timer1"><div class="timer center timer-90s hide"><div class="mask"></div></div><div class="timer-90s-block-wrapper"><div class="timer-90s-block"></div></div></div></div></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">We have not yet considered a theory.
+But understanding the representation is an essential first 
+step towards von N & Mo’s objective.</div><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;margin-top&quot;:&quot;-200px&quot;}"></div><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;filter&quot;:&quot;blur(3px) saturate(0.3) opacity(0.66)&quot;}"></div><div class="quote"><p class="em-above handout notes show">‘we wish to find the mathematically complete principles which 
+define “rational behavior” for the participants in a social economy, 
+and to derive from them the general characteristics of that behavior’ </p><div class="handout notes ctd"> <span class='grey-text'>(Neumann et al., 1953, p. 31)</span>.</div><p class="right grey-text">von Neumann & Morgenstern, 1953 p. 31</p></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-removeclass" data-what="#timer1 .timer" data-cls="running"></div><div class="notes">Why is what we have done so far not sufficient?</div><div class="notes">(Because we have not anchored preference or subjective probability to subjects.)</div><div class="notes">(We have not said anything at all about what it is for someone to have a particular preference,
+nor what it is for them to assign a particular subjective probability to a given condition.)</div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer.hide" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what="#timer1 .timer" data-cls="running"></div></div></div></div></div></div></div></section></div></body></html>

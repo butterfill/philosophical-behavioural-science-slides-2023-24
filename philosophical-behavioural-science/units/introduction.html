@@ -1,0 +1,154 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Introduction: Why Investigate Philosophical Issues in Behavioural Science?</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="introduction"><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Introduction: Why Investigate Philosophical Issues in Behavioural Science?</h2></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">This course is based on a simple challenge.</div><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p><div class="dv dv-velocity" data-what=".individual-and-joint" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="slide"><div class="dv dv-velocity" data-what=".individual-and-joint" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/course_outline_triangles/slide01.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;translate&quot;:&quot;0px 75px&quot;}"></div><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p><div class="notes">Where there are philosophical, psychological and formal theories which appear to target a single set of phenomena while saying incompatible things about it, we face two questions:</div><div class="notes">are they actually inconsistent?</div><div class="notes">if so: how, if at all, should either or both theories be refined?</div><div class="notes">These questions pose the Integration Challenge.
+</div></div></div></div></section><section class="slide"><div style="mix-blend-mode:difference"> <div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="timer-outer" id="timer1"><div class="timer center timer-90s hide"><div class="mask"></div></div><div class="timer-90s-block-wrapper"><div class="timer-90s-block"></div></div></div></div></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">We are really interested in general truths about why people act,
+of course. But let’s start with a concrete case.</div><p>Why are you here?</p><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-removeclass" data-what="#timer1 .timer" data-cls="running"></div><div class="notes">Discuss in pairs. Then pass notes forwards.</div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer.hide" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:0}"></div><div class="dv dv-addclass" data-what="#timer1 .timer" data-cls="running"></div></div><div class="slide"><div class="dv dv-velocity" data-what="#timer1 .timer" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div></div><div class="notes">Am genuinely interested but also want to illustrate a philosophical point</div><div class="notes">In asking you this question, I was assuming you could answer it. More, I was 
+assuming a Simple Picture of Action.</div><div class="slide"><p class="em-above">When you act,</p><p class="indent">there are reasons why you act;</p><p class="indent know-reasons">you know the reasons; </p><p class="indent because-reasons">you act because you know the reasons; and</p><p class="indent">the reasons <span class="justify-your-action"><span class="justify">justify</span><span> your action.</span></span><span> </span><span class="hide myai">make your action intelligible.
+
+</span></p><div class="notes">My purpose in asking you this question requires
+that each of these claims are true.</div></div><div class="slide"><div class="dv dv-addclass" data-what=".justify" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".justify" data-cls="bkg-invert"></div><div class="notes">Of course we sometimes act out of emotions like love or jealousy where
+much of the point of the action is that it is not justfified in any rational sense.
+(Love makes you do many unreasonable things.)</div></div><div class="slide"><div class="dv dv-style" data-what=".justify-your-action" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div><div class="dv dv-removeclass" data-what=".justify" data-cls="bkg-invert"></div><div class="dv dv-velocity" data-what=".myai" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">So maybe we should just say that the reasons make the action intelligible in some way,
+even if they do not provide any kind of rational justification.</div><div class="notes">But maybe this is too quick?
+</div></div></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/medea.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Here is Medea pondering revenge on her ex husband:</div><div class="notes">(img source: Rachel Cusk's Medea publicity materials)</div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><p> ‘now I have a day, </p><p>and a day is long enough to make of him, </p><p>his daughter, and the one I used to love </p><p>a heap of bones. </p></div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/medea.jpg" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:0}"></div><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><p class="em-above">So, friends, what method should we use? </p><p><span class="choose">Hard to choose. </span></p><p>I could torch them in their love nest or butcher them sleeping </p><p>in their fragrant bed. These require stealth, </p><p>luck more than nerve and style. </p><p>Nothing could be worse if I were caught </p><p>lurking in their house. They’d mock and laugh </p><p>at me intolerably before putting me to death. </p><p>Better to reach them directly without detection. </p><p>I’ll do what I do best. I’ll poison them’</p><p class="right"><span class='grey-text'>(Euripides, 2006, p. 49)</span></p><div class="slide"><div class="dv dv-addclass" data-what=".choose" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".choose" data-cls="bkg-invert"></div><div class="notes">It looks like Medea, for all that she is acting out of jealousy, 
+is demonstrating instrumental rationality.</div><div class="notes">And look later ...
+
+</div></div></div></div></div></div></section><section class="slide"><div class="medea-clip" style="margin-top:-160px; margin-left:-100px"><video width="1024" height="768" playsinline="playsinline"><source src="/img/Medea-trailer.mp4" type="video/mp4"/></video></div><script>function getMedeaVideo () { return $('.medea-clip video')[0] }
+addAction({ 
+  'doit' : function () {
+    getMedeaVideo().play()
+  },
+  'undoit' : function () {
+    getMedeaVideo().pause()
+  }
+})</script><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="words"><div class="container_12"><div class="grid_12"><div style="margin-top:120px"></div><div class="slide"><p>The horror of my evil overwhelms me. </p><p>Horror of what I’ll do. Angry passions </p><p>have mastered me—emotions of misrule </p><p>that destroy men.</p></div><div class="slide"><p class="em-above">Nothing will undo my resolve</p><p>to kill my children and escape</p><p>—but it must be quick.</p><p>If I hesitate now someone else will murder them more cruelly.</p><p>There’s no way out. They must die.</p><p class="right"><span class='grey-text'>(Euripides, 2006, p. 76)</span></p></div></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="challenge hide"><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p></div><p class="em-above">When you act,</p><p class="indent">there are reasons why you act;</p><p class="indent know-reasons">you know the reasons; </p><p class="indent because-reasons">you act because you know the reasons; and</p><p class="indent">the reasons <span class="justify-your-action"><span class="justify">justify</span><span> your action.</span></span><span> </span><span class="hide myai">make your action intelligible.
+
+</span></p><div class="dv dv-style" data-what=".justify-your-action" data-css="{&quot;text-decoration&quot;:&quot;line-through&quot;}"></div><div class="dv dv-velocity" data-what=".myai" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="slide"><div class="dv dv-addclass" data-what=".justify" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".justify" data-cls="bkg-invert"></div><div class="notes">Maybe we were too quick to abandon talk of justification
+just on the grounds that emotions are sometimes involved.</div><div class="notes">Even someone lashing out in anger is, often enough,
+angling their attack in order to be maximally destructive.</div></div><div class="slide"><div class="dv dv-velocity" data-what=".myai" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-style" data-what=".justify-your-action" data-css="{&quot;text-decoration&quot;:&quot;none&quot;}"></div><div class="dv dv-removeclass" data-what=".justify" data-cls="bkg-invert"></div><div class="notes">So the basic picture is quite hard to challenge on narrowly intuitive grounds.</div><div class="notes"></div></div><div class="slide"><div class="dv dv-velocity" data-what=".challenge" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div></div><div class="slide"><p class="hem-around bkg-white-row">How can we turn this into a theory? <span class="hide theory">Is it true? </span></p><div class="notes">This is the basic picture that nearly all philosophers start from
+in attempting to meet the challenge.</div><div class="notes">The philosophers have mostly been concerned to find the best way of turning this simple picture
+into a systematic theory.</div></div><div class="slide"><div class="dv dv-velocity" data-what=".theory" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">It’s just here that psychology and other behavioural sciences are relevant ...</div><div class="notes">Behavioural sciences contribute two things</div><div class="notes">We can draw on them in turning the simple picture into a theory
+(decision theory and game theory are supposed to be elaborations of what it is to be rational).</div><div class="notes">And, more insterestingly, we can draw on them to show that the simple picture is either 
+wrong or else only a very small part of the answer.
+
+</div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="center huge-glow">three illustrations</p><div class="notes">three illustrations of things we will study that
+create problems for the simple picture.
+
+</div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="center huge-glow">1.</p><div class="notes">first illustrations of something we will study that
+creates problems for the simple picture.
+</div></div></div></div></div></section><section class="slide"><img class="bkg" src="/img/sinervo_fig1.png" width="1024px"/><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:0}"></div><div class="game-theory"><p class="center">game theory</p></div><div class="notes">Looking ahead with some illustrations to whet your appetite</div><div class="notes">We will explore
+game theory as an attempt to explains why things happen</div><div class="slide"><div class="dv dv-velocity" data-what="img.bkg" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">The intresting thing about game theory is that it has such a wide variety of applications.
+It promises us simple principles that explain both the structure of sophisticated human
+interactions and the morphology of side-botched lizzards</div><div class="notes">illustration : side-botched lizzards</div></div><div class="slide"><div class="dv dv-velocity" data-what=".game-theory" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;filter&quot;:&quot;blur(3px) saturate(0)&quot;}"></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><p class="em-above">When you act,</p><p class="indent">there are reasons why you act;</p><p class="indent know-reasons">you know the reasons; </p><p class="indent because-reasons">you act because you know the reasons; and</p><p class="indent">the reasons <span class="justify-your-action"><span class="justify">justify</span><span> your action.</span></span><span> </span><span class="hide myai">make your action intelligible.
+
+</span></p></div><div class="notes">To the extent that your actions are organised along the same lines that characterise 
+the sexual strategies of side-botched lizzards, can there be a big role for
+reasons and your knowledge of reasons?
+
+</div></div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="center huge-glow">2.</p></div></div></div></div></section><section class="slide"><div class="notes">anarchic hand syndrom from dr strangelove <span class='grey-text'>(Della Sala, Marchetti, &#38; Spinnler, 1991)</span></div><div class="clip1" style="margin-top:-160px; margin-left:-100px"><video width="1024" height="768" playsinline="playsinline"><source src="/img/dr-strangelove-ahs-01.30.58-01.31.16.mp4" type="video/mp4"/></video></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div><p class="center">anarchic hand syndrome</p><div class="spa hide"><p class="em-above">When you act,</p><p class="indent">there are reasons why you act;</p><p class="indent know-reasons">you know the reasons; </p><p class="indent because-reasons">you act because you know the reasons; and</p><p class="indent">the reasons <span class="justify-your-action"><span class="justify">justify</span><span> your action.</span></span><span> </span><span class="hide myai">make your action intelligible.
+
+</span></p></div></div></div></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div style="margin-top:270px"><div class="description hide"><p>‘The right hand frequently carried out complex activities that
+were not willed by G.C. </p><div>These activities were clearly
+goal-directed and were well executed, but undesired by the
+patient, who used her left hand to try to stop them. </div><div>For
+example, when the patient had a steaming cup of tea in front of
+her, the right hand proceeded to pick it up and bring it to her
+mouth, even though the patient knew that it was too hot and had
+just said she would wait a few moments until it had cooled.</div><div>Nevertheless it needed the intervention of her left hand to
+replace the cup on the table.’</div><p class="right"><span class='grey-text'>(Della Sala et al., 1991, p. 1114)</span></p></div></div></div></div></div></div></div><div class="slide"><div class="dv dv-velocity" data-what="p" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><script>function getVideo () { return $('.clip1 video')[0] }
+addAction({ 
+  'doit' : function () {
+    getVideo().play()
+  },
+  'undoit' : function () {
+    getVideo().pause()
+  }
+})</script></div><div class="slide"><div class="dv dv-velocity" data-what="p" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".clip1" data-css="{&quot;blur&quot;:&quot;5px&quot;}" data-options="{&quot;duration&quot;:500}"></div><div class="notes">Believe it or not, this rare syndrom tells us something important about why
+all humans act. Or so I will attempt to show you (much) later in the course.</div><div class="notes">Challenges unity and therefore the idea that there is a single coherent body
+of reasons that are known.</div></div><div class="slide"><div class="dv dv-velocity" data-what=".spa" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">If your body comprises multiple motivational systems which can work against
+each other, should we be confident that you have reasons for your actions?</div></div><div class="slide"><div class="dv dv-velocity" data-what=".spa" data-css="{&quot;opacity&quot;:0}" data-options="{&quot;visibility&quot;:&quot;hidden&quot;,&quot;duration&quot;:400}"></div><div class="dv dv-velocity" data-what=".description" data-css="{&quot;opacity&quot;:1}" data-options="{&quot;visibility&quot;:&quot;visible&quot;,&quot;duration&quot;:400}"></div><div class="notes">[do not use -- only here in case someone asks]
+
+</div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="center huge-glow">3.</p></div></div></div></div></section><section class="slide"><div class="notes">habitual processes</div><div class="clip2" style="margin-top:-160px; margin-left:-100px"><video width="1024" height="768" playsinline="playsinline"><source src="/img/rat-lever.mp4" type="video/mp4"/></video></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="words"><div class="container_12"><div class="grid_12"><div style="margin-top:200px; "><p class="center">habitual processes</p></div></div></div></div></div><div class="slide"><div class="dv dv-velocity" data-what="p" data-css="{&quot;opacity&quot;:0.5}" data-options="{&quot;duration&quot;:400}"></div><script>function getClip2 () { return $('.clip2 video')[0] }
+addAction({ 
+  'doit' : function () {
+    getClip2().play()
+  },
+  'undoit' : function () {
+    getClip2().pause()
+  }
+})
+</script></div></section><section class="slide"><img class="bkg" src="/img/course_outline_triangles/slide01.jpg" width="1024px"/><div class="words"><div class="container_12"><div class="grid_12"><div class="dv dv-style" data-what="img.bkg" data-css="{&quot;translate&quot;:&quot;0px 75px&quot;}"></div><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p><div class="notes">There are three kinds of theory we can use to meet the challenge.</div><div class="notes">It turns out that the three kinds of theory are not obviously compatible
+with each other, although there is much to be said for each.</div><div class="notes">Our job is to (i) uncover the apparent inconsistencies between different 
+disciplines’ theories, (ii) work out whether the inconsistencies are real,
+and (iii) if so which theory to accept and how to revise the other discipline’s 
+theory.
+</div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">As I said, the challenge is to discover why people act,
+individually and jointly</div><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p><p class="em-above">When you act,</p><p class="indent">there are reasons why you act;</p><p class="indent know-reasons">you know the reasons; </p><p class="indent because-reasons">you act because you know the reasons; and</p><p class="indent">the reasons <span class="justify-your-action"><span class="justify">justify</span><span> your action.</span></span><span> </span><span class="hide myai">make your action intelligible.
+
+</span></p><p class="hem-around bkg-white-row">How can we turn this into a theory? <span class="theory">Is it true? </span></p><div class="notes">To discovery why people act, we need to consider not only philosophical and 
+psychlogical theories
+and evidence for them but also ,
+formal models, nonhumans and neuropschological edge cases. 
+
+</div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Still here? That’s great. You are very welcome.</div><p class="center huge-glow-50" style="line-height:0.2em"><span class="philosophical">Philosophical</span><span> Issues</span></p><p class="center huge-glow-invert-50" style="line-height:0.2em"><span>in</span></p><p class="center huge-glow-50" style="line-height:0.2em"><span class="bs">Behavioural Science</span><span>:</span></p><p>&nbsp;</p><p class="center huge-glow-invert-50" style="line-height:0.7em"><span>from Individual </span><br/><span>to </span><span class="collective">Collaborative </span><br/><span class="action">Action</span></p></div></div></div></div></section></div></body></html>

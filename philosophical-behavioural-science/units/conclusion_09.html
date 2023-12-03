@@ -1,0 +1,67 @@
+<html lang="en"><head><meta charset="utf-8"/><title>Conclusion</title><link href="https://fonts.googleapis.com/css?family=Lato:300,400,900,400italic" rel="stylesheet" type="text/css"/><link rel="stylesheet" href="/styles/for.slides.all.css"/><link rel="stylesheet" href="/styles/steve_deck_style.css"/></head><body><script defer="defer" src="/scripts/for.slides.all.min.js"></script><script>const wshost = (window.location.search.match(/[\?&]wshost=([\w\.]+)(&|$)/) || [])[1] 
+const lead = (window.location.search.match(/[\?&]lead=(\w+)(&|$)/) || [])[1] || false
+const pathname = window.location.pathname
+console.log(`wshost: ${wshost}; lead: ${lead}`)
+const doLeader = function (socket) {
+  $(document).bind('deck.change', function (event, from, to) {
+    const msg = JSON.stringify({from, to, pathname})
+    socket.send(msg)
+    console.log(`sent: ${msg}`)
+  })
+}
+const doFollower = function (socket) {
+  socket.addEventListener('message',function (msg) {
+    const data = (() => {
+      try {
+        return JSON.parse(msg.data)
+      } catch (e) {
+        return msg.data
+      }
+    })()
+    if( data && data.pathname && data.pathname === pathname ) {
+      console.log(`remote control: going to slide ${data.to}`)
+      $.deck('go', data.to)
+    } else {
+      console.log(msg)
+    }
+  })
+}
+const configure = function () {
+  console.log(`configuring webscoket for remote control`)
+  const socket = new WebSocket(`ws://${wshost}`)
+  socket.onopen = function () {
+    if (!lead || lead === 'false') {
+      doFollower(socket)
+    } else {
+      doLeader(socket)
+    }
+  }
+  return socket
+}
+if (wshost) {
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    let socket = configure()
+    window._socket = socket
+    const monitorSocket = function () {
+      if (socket.readyState !== 1) {
+        console.log('websocket connection lost, attempting to reconnect')
+        socket = configure()
+      }
+    }
+    window.setInterval(monitorSocket, 1000)
+  })
+}
+</script><div class="help-underlay" id="helpUnderlay"><div class="help-modal" id="helpModal"><h1>Keyboard Shortcuts<kbd class="help-key"><span>?f</span></kbd></h1><div class="help-close" id="helpClose">×</div><!-- .help-close--><div class="help-modal-content" id="helpModalContent"><div class="help-list-wrap" id="helpListWrap"><ul class="help-list"><li class="help-key-unit"><kbd class="help-key"><span>→</span></kbd><span class="help-key-def">Next step</span></li><li class="help-key-unit"><kbd class="help-key"><span>←</span></kbd><span class="help-key-def">Previous step</span></li><li class="help-key-unit"><kbd class="help-key"><span>↓</span></kbd><span class="help-key-def">Skip this slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>↑</span></kbd><span class="help-key-def">Previous slide</span></li><li class="help-key-unit"><kbd class="help-key"><span>m</span></kbd><span class="help-key-def">Show slide thumbnails</span></li><li class="help-key-unit"><kbd class="help-key"><span>n</span></kbd><span class="help-key-def">Show notes</span></li><li class="help-key-unit"><kbd class="help-key"><span>h</span></kbd><span class="help-key-def">Show handout latex source</span></li><li class="help-key-unit"><kbd class="help-key"><span>N</span></kbd><span class="help-key-def">Show talk notes latex source</span></li></ul></div></div></div></div><div class="deck-notes"><div class="deck-notes-container"></div></div><div class="deck-handout"><div class="deck-handout-container"></div></div><div class="deck-container"><section class="slide" id="instructions"><div class="words"><div class="container_12"><div class="grid_12"><div class="middle"><p class="center">Click here and press the right key for the next slide.</p><p class="center">(This may not work on mobile or ipad. You can try using chrome or firefox, but even that may fail. Sorry.)</p></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><p>also ...</p><p>Press the left key to go backwards (or swipe right)</p><p>Press n to toggle whether notes are shown (or add '?notes' to the url before the #)</p><p>Press m or double tap to slide thumbnails (menu)</p><p>Press ? at any time to show the keyboard shortcuts</p></div></div></div></section><script>window.deckSlideActions = window.deckSlideActions || [];
+addAction = function(o) {
+  // find which <script> element we are 
+  //   (used by deck.init to work out which slide to attach the action to)
+  var scripts = document.getElementsByTagName( 'script' );
+  var thisScriptEl = scripts[ scripts.length - 1 ];
+  o.scriptEl = thisScriptEl;
+  window.deckSlideActions.push(o);
+}
+
+</script><!-- param @cls and param @options should be objects--><section class="slide" id="conclusion_09"><div class="spacer">&nbsp;</div><div class="title-block"><div class="title-container"><h2 class="title1">Conclusion</h2></div></div></section><section class="slide"><img class="bkg" src="/img/PA301239.JPG" style="filter:contrast(1.5)"/><div class="words" style="; mix-blend-mode:overlay"><div class="container_12"><div class="grid_12"><p class="conclusion-title center huge-glow-110" style="margin-top:350px;">conclusion</p><div class="notes">In conclusion, ...</div></div></div></div><div class="words"><div class="container_12"><div class="grid_12"><div style="margin-top:-550px"><div class="slide"><p class="hem-around">To understand why people act, individually and jointly.</p><p class="hem-around">Philosophical, psychological and formal answers are—or appear—both mutually dependent and inconsistent.</p><p class="hem-around">This is an obstacle to full understanding<br/><span>but one that you can overcome.</span></p></div></div></div></div></div></section><section class="slide"><div class="words"><div class="container_12"><div class="grid_12"><div class="notes">repeated from conclusion to the whole course (peroration)</div><p class="huge-glow">challenge </p><p style="margin-top:-2.5em;">Discover why people <span class="act">act</span><span class="individual-and-joint">,</span><br/><span class="individual-and-joint"> <span class="individually">individually</span><span> and </span><span class="jointly">jointly</span><span>.</span></span></p><p class="huge-glow"> </p><div class="noslide"><p class="hem-around"><span>basic theories and discoveries </span><br/><span>from three disciplines needed</span><br/><span>to answer the question</span></p><p class="right" style="margin-top:-4em; float:right; padding-left:1em; border-left: 1px #999 dashed">to reach beyond<br/><span>you need to look beyond</span></p></div><div class="contain" style="position:relative"><div class="key"><p class="huge-glow" style="margin-left:1em; filter:saturate(0)">🔑</p></div><div class="layer2" style="position:absolute; top:0; left:0 "><div class="noslide"><p class="hem-around"><span>inconsistencies abound</span></p></div><div class="noslide"><p class="hem-around"><span>but integration is possible</span></p></div><div class="noslide"></div></div></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="center huge-glow">appendix </p></div></div></div></div></section><section class="slide"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><p class="huge-glow center" style="line-height:.4em; filter:opacity(.5)">philosophical<br/><span>methods</span></p></div></div></div></div><div style="position: absolute; top:0; left:0; width:100%; height:100%;"><div class="container_12"><div class="grid_12 "><div class="words"><div class="middle"><div class="notes">Philosophical methods: you might say, examples and contrast cases  are the only things we have as philosophers,
+so we’re just stuck.  But although I think this is right, I think it’s too quick to say we can’t do better ...</div><div class="em-around-children"><p class="center">informal observation, </p><p class="center">guesswork (‘intuition’), </p><p class="center">reasoning, </p><p class="center">& theoretical elegance</p></div></div></div></div></div></div></section><section class="slide"><div class="right-half-white" style="z-index:-22;"></div><div class="container_12"><div class="notes">Diagnosis:</div><div class="notes">It seems to me that, whatever we are characterising, \textbf{it is important to distinguish
+characterising the thing to be explained 
+from constructing a candidate explanation of it}.</div><div class="grid_6 words left-half"><div style="padding-right:1em;"><p class="center">Thing to Be Explained</p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p class="center">Candidate Explanation</p></div></div><div class="clear"></div><div class="slide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p>dimming of a star</p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p>conjecture about a planet</p></div></div></div><div class="clear"></div><div class="slide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p>object-tracking abilities in infants</p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p>conjecture about innate knowledge</p></div></div></div><div class="clear"></div><div class="slide"><div class="grid_6 words left-half"><div style="padding-right:1em;"><p><span class="together">joint action</span></p></div></div><div class="grid_6 words invert right-half"><div style="padding-left:1em;"><p>conjecture about shared intention/commitment/team reasoning/motor representation/...</p></div></div></div><div class="slide"><div class="dv dv-addclass" data-what=".together" data-cls="transition-04"></div><div class="dv dv-addclass" data-what=".together" data-cls="bkg-invert"></div><div class="notes">Key issue: how to characterise the abilities to be explained by the theory?</div></div></div></section></div></body></html>
